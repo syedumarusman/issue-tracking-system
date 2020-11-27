@@ -1,3 +1,4 @@
+const Boom = require('boom');
 const UserHandler = require('../handlers/user');
 
 const getAll = async (ctx) => {
@@ -12,11 +13,11 @@ const getAll = async (ctx) => {
 
 const create = async (ctx) => {
     const payload = {
+        username: ctx.request.body.username,
         name: ctx.request.body.name,
         isAdmin: ctx.request.body.isAdmin,
         email: ctx.request.body.email,
     }
-    console.log("payload: ", payload);
     const result = await UserHandler.create(payload);
     ctx.body = {
         meta: {
@@ -26,4 +27,31 @@ const create = async (ctx) => {
     };
 }
 
-module.exports = { getAll, create }
+const update = async (ctx) => {
+    const payload = {
+        username: ctx.params.username,
+        name: ctx.request.body.name,
+        isAdmin: ctx.request.body.isAdmin,
+        email: ctx.request.body.email,
+    }
+    const result = await UserHandler.update(payload);
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: result
+    };
+}
+
+const remove = async (ctx) => {
+    const username = ctx.params.username;
+    const result = await UserHandler.remove(username);
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: result
+    };
+}
+
+module.exports = { getAll, create, update, remove }

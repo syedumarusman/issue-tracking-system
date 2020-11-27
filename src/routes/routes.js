@@ -1,11 +1,16 @@
 const Router = require('koa-router');
 const handler = require('../controllers/user');
-const router = new Router();
 
-router.get('/users', handler.getAll);
+const router = new Router({
+    prefix: '/user'
+})
 
-router.post('/user', handler.create);
+router.get('/', handler.getAll);
 
-// router.get('/incidents', handler.getAll);
+router.post('/', handler.create);
+
+router.put('/:username', handler.update);
+
+router.delete('/:username', handler.remove);
 
 module.exports = router.routes();

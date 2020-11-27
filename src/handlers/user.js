@@ -1,26 +1,47 @@
 const Boom = require('boom');
 const User = require('../models/user');
-const { userCreateSchema } = require('../validations/validationSchema')
+const { createSchema, updateSchema, removeSchema } = require('../validations/userSchema')
 
 const getAll = async () => {
-    const users = await User.find();
-    if (!users) {
-        throw Boom.notFound('Users does not exist');
-    }
-    return users;
+    return await User.find();
 }
 
 const create = async (payload) => {
-    const { value, error } = userCreateSchema.validate(payload, {allowUnknown: true});
+    const { error } = createSchema.validate(payload, { allowUnknown: true });
     if (error) {
         throw error;
     }
     const user = await User.create(payload);
-    console.log("db response: ", user);
     if (!user) {
-        throw Boom.notFound('error');
+        throw Boom.badRequest('Username already exist');
     }
     return user;
 }
 
-module.exports = { getAll, create }
+const update = async (payload) => {
+    const { error } = updateSchema.validate(payload, { allowUnknown: true });
+    if (error) {
+        throw error;
+    }
+    query = { username: payload.username }
+    const user = await User.findOneAndUpdate(query, payload, { useFindAndModify: false, new: true });
+    if (!user) {
+        throw Boom.notFound('User does not exist');
+    }
+    return user;
+}
+
+const remove = async (username) => {
+    const { error } = removeSchema.validate({ username }, { allowUnknown: true });
+    if (error) {
+        throw error;
+    }
+    const user = await User.findOneAndRemove({ username }, { useFindAndModify: false });
+    if (!user) {
+        throw Boom.notFound('User does not exist');
+    }
+    result = username + " succesfully removed." 
+    return result;
+}
+
+module.exports = { getAll, create, update, remove }
