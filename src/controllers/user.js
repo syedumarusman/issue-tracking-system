@@ -11,6 +11,17 @@ const getAll = async (ctx) => {
     };
 }
 
+const getUser = async (ctx) => {
+    const username = ctx.params.username;
+    const result = await UserHandler.getUser(username)
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: result
+    }
+}
+
 const create = async (ctx) => {
     const payload = {
         username: ctx.request.body.username,
@@ -54,4 +65,4 @@ const remove = async (ctx) => {
     };
 }
 
-module.exports = { getAll, create, update, remove }
+module.exports = { getAll, getUser, create, update, remove }

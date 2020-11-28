@@ -7,6 +7,10 @@ const createSchema = Joi.object({
     email: Joi.string().email().required()
 });
 
+const getUserSchema = Joi.object({
+  username: Joi.string().required()
+})
+
 const updateSchema = Joi.object({
     name: Joi.string(),
     isAdmin: Joi.boolean(),
@@ -17,4 +21,4 @@ const removeSchema = Joi.object({
   username: Joi.string().required()  
 })
 
-module.exports = { createSchema, updateSchema, removeSchema }
+module.exports = { getUserSchema, createSchema, updateSchema, removeSchema }

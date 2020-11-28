@@ -1,9 +1,21 @@
 const Boom = require('boom');
 const User = require('../models/user');
-const { createSchema, updateSchema, removeSchema } = require('../validations/userSchema')
+const { createSchema, getUserSchema, updateSchema, removeSchema } = require('../validations/userSchema')
 
 const getAll = async () => {
     return await User.find();
+}
+
+const getUser = async (username) => {
+    const { value, error } = getUserSchema.validate({ username })
+    if (error) {
+        throw error;
+    }
+    const user = await User.findOne({ username });
+    if (!user) {
+        throw Boom.notFound('User does not exist');
+    }
+    return user;
 }
 
 const create = async (payload) => {
@@ -44,4 +56,4 @@ const remove = async (username) => {
     return result;
 }
 
-module.exports = { getAll, create, update, remove }
+module.exports = { getAll, getUser, create, update, remove }
