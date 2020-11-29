@@ -1,8 +1,10 @@
 const Koa = require('koa');
+const Compose = require('koa-compose')
 const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const Boom = require('boom');
-const routes = require('./routes/user');
+const userRoutes = require('./routes/user');
+const incidentRoutes = require('./routes/incident');
 
 const app = new Koa();
 
@@ -35,6 +37,8 @@ app.use(async function validationMiddleware(ctx, next) {
 });
 
 app.use(bodyParser());
+
+const routes = Compose([userRoutes, incidentRoutes]) 
 app.use(routes);
 
 app.listen(4000, () => {
