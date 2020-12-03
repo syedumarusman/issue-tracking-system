@@ -7,6 +7,7 @@ import Login from "./login.js";
 import SignUp from "./signup.js";
 import ResetPassword from "./resetPassword.js";
 import Dashboard from "./dashboard.js";
+import TicketList from "./components/TicketList.js";
 
 function App() {
 	  return (<Router>
@@ -35,6 +36,7 @@ function App() {
 		              <Route path="/sign-up" component={SignUp} />
 					  <Route exact path='/reset-password' component={ResetPassword} />
 					  <Route path="/dashboard" component={Dashboard} />
+					  <Route path="/tickets" component={TicketList} />
 		            </Switch>
 		          </div>
 		        </div>
