@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from 'react-router';
 import { apiClient } from '../_helpers/axios';
 
-export default class TicketList extends Component {
+export default class IncidentList extends Component {
   constructor(props){
     super(props);
     this.state = {email: '', password: '', loginSuccessful: 0};
