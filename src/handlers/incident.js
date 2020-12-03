@@ -11,7 +11,7 @@ const create = async (payload) => {
     if (error) {
         throw error;
     }
-    const incident = await Incident.create(payload).catch((err) => console.log(err));
+    const incident = await Incident.create(payload);
     if (!incident) {
         throw Boom.badRequest('incident already exist');
     }

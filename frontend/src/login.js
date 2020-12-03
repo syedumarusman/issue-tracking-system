@@ -13,14 +13,14 @@ export default class Login extends Component {
 
   handleSubmit = (event) => {
     const requestPayload = { email: this.state.email, password: this.state.password }
-    //console.log(this.state)
 
     fetch('http://localhost:4000/user/login', {
       method: 'POST',
+      headers: { "Content-Type": "application/json"},
       // Login api does not need to be auth, this header is for api requests that need auth
-      headers: {
-        'Authorization': 'Bearer' + localStorage.userToken
-      },
+      // headers: {
+      //   'Authorization': 'Bearer' + localStorage.userToken
+      // },
       // We convert the React state to JSON and send it as the POST body
       body: JSON.stringify(requestPayload)
 
@@ -30,8 +30,6 @@ export default class Login extends Component {
       localStorage.setItem('userToken', 'asdfasdf24t2');
       // Set loginSuccessful so that render() knows it should redirect to dashboard after login is loginSuccessful
       this.setState({loginSuccessful: 1});
-      //console.log("Api response: ", response)
-      //console.log("This.state: ", this.state);
       return response.json();
     });
 

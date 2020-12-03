@@ -45,10 +45,11 @@ const create = async (payload) => {
     if (error) {
         throw error;
     }
-    const user = await User.create(payload);
-    if (!user) {
+    const user = await User.findOne({email: payload.email})
+    if (user) {
         throw Boom.badRequest('This User already exists');
     }
+    await User.create(payload);
     return user;
 }
 

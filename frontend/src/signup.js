@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 export default class SignUp extends Component {
     constructor(props){
         super(props);
-        this.state = {fullname: '', email: '', password: '', confirmPassword: '', errors: {}, signupSuccessful: 0};
+        this.state = {name: '', email: '', password: '', confirmPassword: '', errors: {}, signupSuccessful: 0};
       }
     
       handleChange = (event) => {
@@ -12,14 +12,13 @@ export default class SignUp extends Component {
       }
     
       handleSubmit = (event) => {
-        const requestPayload = { fullname: this.state.fullname, email: this.state.email, password: this.state.password, confirmPassword: this.state.confirmPassword }
+        const requestPayload = { name: this.state.name, email: this.state.email, password: this.state.password }
 
         if (this.validate()){
 
-            //console.log(this.state)
-        
             fetch('http://localhost:4000/user/', {
             method: 'POST',
+            headers: { "Content-Type": "application/json"},
             // Login api does not need to be auth, this header is for api requests that need auth
             //    headers: {
             //      'Authorization': 'Bearer' + localStorage.userToken
@@ -31,7 +30,7 @@ export default class SignUp extends Component {
                 this.setState({signupSuccessful: 1});
                 return response.json();
             });
-        }
+         }
     
         event.preventDefault();
       }
@@ -50,8 +49,6 @@ export default class SignUp extends Component {
                 errors["password"] = "Passwords don't match.";
               }
           }
-          //console.log(isValid)
-
           // Update the state errors.
           this.setState({errors: errors});
 
@@ -69,7 +66,7 @@ export default class SignUp extends Component {
 
                     <div className="form-group">
                         <label>Full Name</label>
-                        <input type="text" className="form-control" name="fullname" placeholder="Full name" value={this.state.value} onChange={this.handleChange}/>
+                        <input type="text" className="form-control" name="name" placeholder="Full name" value={this.state.value} onChange={this.handleChange}/>
                     </div>
 
                     <div className="form-group">
@@ -90,7 +87,7 @@ export default class SignUp extends Component {
                         <input type="password" className="form-control" name="confirmPassword" placeholder="Enter password" value={this.state.value} onChange={this.handleChange}/>
                     </div>
 
-                    <button type="submit" className="btn btn-primary btn-block" onclick="">Sign Up</button>
+                    <button type="submit" className="btn btn-primary btn-block" >Sign Up</button>
                     <p className="forgot-password text-right">
                         Already registered <a href="sign-in">sign in?</a>
                     </p>
