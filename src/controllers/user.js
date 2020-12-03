@@ -12,8 +12,8 @@ const getAll = async (ctx) => {
 }
 
 const getUser = async (ctx) => {
-    const username = ctx.params.username;
-    const response = await UserHandler.getUser(username)
+    const userId = ctx.params.userId;
+    const response = await UserHandler.getUser(userId);
     ctx.body = {
         meta: {
             status: 200
@@ -27,20 +27,20 @@ const loginUser = async (ctx) => {
         email: ctx.request.body.email,
         password: ctx.request.body.password,
     }
-    const token = await UserHandler.loginUser(payload)
+    const { token, userDetails } = await UserHandler.loginUser(payload)
     ctx.body = {
         meta: {
-            status: 200
+            status: 200,
+            token: token
         },
-        token: token
+        result: userDetails
     }
 }
 
 const create = async (ctx) => {
     const payload = {
-        username: ctx.request.body.username,
-        password: ctx.request.body.password,
         name: ctx.request.body.name,
+        password: ctx.request.body.password,
         role: ctx.request.body.role? ctx.request.body.role: USER_ROLES.customer,
         email: ctx.request.body.email,
     }
@@ -55,9 +55,9 @@ const create = async (ctx) => {
 
 const update = async (ctx) => {
     const payload = {
-        username: ctx.params.username,
-        password: ctx.request.body.password,
+        userId: ctx.params.userId,
         name: ctx.request.body.name,
+        password: ctx.request.body.password,
         role: ctx.request.body.role,
         email: ctx.request.body.email,
     }
@@ -70,9 +70,11 @@ const update = async (ctx) => {
     };
 }
 
-const remove = async (ctx) => {
-    const username = ctx.params.username;
-    const response = await UserHandler.remove(username);
+const resetPassword = async (ctx) => {
+    const payload = {
+        email: ctx.request.body.email
+    }
+    const response = await UserHandler.resetPassword(payload);
     ctx.body = {
         meta: {
             status: 200
@@ -81,4 +83,15 @@ const remove = async (ctx) => {
     };
 }
 
-module.exports = { getAll, getUser, loginUser, create, update, remove }
+const remove = async (ctx) => {
+    const userId = ctx.params.userId;
+    const response = await UserHandler.remove(userId);
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: response
+    };
+}
+
+module.exports = { getAll, getUser, loginUser, create, resetPassword, update, remove }

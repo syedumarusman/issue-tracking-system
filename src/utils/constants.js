@@ -9,5 +9,11 @@ module.exports = Object.freeze({
         inProgress: "In Progress", 
         done: "Done"
     },
+    CATEGORY: {
+        critical: "Critical",
+        high: "High",
+        medium: "Medium",
+        low: "Low"
+    },
     JWT_SECRET_KEY: "****secret****"    
 });
