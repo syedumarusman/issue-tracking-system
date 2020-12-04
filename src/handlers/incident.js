@@ -7,13 +7,13 @@ const getAll = async () => {
 }
 
 const create = async (payload) => {
-    payload.caseHistory.append(`${payload.title} Incident created at ${payload.dateCreated}`)
+    payload.caseHistory.push(`${payload.title} Incident created at ${payload.dateCreated}`)
     const { error } = createSchema.validate(payload, { allowUnknown: true });
     if (error) {
         throw error;
     }
     const incident = await Incident.findOne({title: payload.title});
-    if (!incident) {
+    if (incident) {
         throw Boom.badRequest('incident already exist');
     }
     await Incident.create(payload);

@@ -7,7 +7,7 @@ import Login from "./login.js";
 import SignUp from "./signup.js";
 import ResetPassword from "./resetPassword.js";
 import Dashboard from "./dashboard.js";
-import IncidentList from "./components/IncidentList.js";
+import ReportIncident from "./reportIncident.js"
 
 function App() {
 	  return (<Router>
@@ -31,12 +31,12 @@ function App() {
 		        <div className="auth-wrapper">
 		          <div className="auth-inner">
 		            <Switch>
-		              <Route exact path='/' component={Login} />
+					  <Route exact path='/' component={Login} />
 		              <Route path="/sign-in" component={Login} />
 		              <Route path="/sign-up" component={SignUp} />
 					  <Route exact path='/reset-password' component={ResetPassword} />
 					  <Route path="/dashboard" component={Dashboard} />
-					  <Route path="/incidents" component={IncidentList} />
+					  <Route path="/reportIncident" component={ReportIncident} />
 		            </Switch>
 		          </div>
 		        </div>

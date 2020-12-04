@@ -10,7 +10,7 @@ const IncidentSchema = new Schema({
     dateResolved: { type: Date, required: true },
     state: { type: String, required: true },
     pointOfContact: { type: String, required: true },
-    tags: { type: [String], required: true },
+    tags: { type: [String] },
     currentAssignee: { type: String, required: true },
     caseHistory: { type: [String], required: true }
 }, {

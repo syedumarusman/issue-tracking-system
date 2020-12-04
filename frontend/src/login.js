@@ -28,8 +28,7 @@ export default class Login extends Component {
       // Store user and token returned by the backend with localStorage, fake the info for now
       localStorage.setItem('currentUser', {user: 'fake', role: 'Admin'});
       localStorage.setItem('userToken', 'asdfasdf24t2');
-      // Set loginSuccessful so that render() knows it should redirect to dashboard after login is loginSuccessful
-      this.setState({loginSuccessful: 1});
+
       return response.json();
     });
 
@@ -42,7 +41,7 @@ export default class Login extends Component {
       } else {
         return (
             <form onSubmit={this.handleSubmit}>
-                <h3>Sign In</h3>
+                <h3>Login</h3>
 
                 <div className="form-group">
                     <label>Email address</label>

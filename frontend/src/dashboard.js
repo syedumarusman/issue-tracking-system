@@ -1,66 +1,84 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router';
+import { apiClient } from './_helpers/axios';
 
 export default class Dashboard extends Component {
   constructor(props){
     super(props);
-    this.state = {email: '', password: '', loginSuccessful: 0};
+    this.state = {email: '', password: '', loginSuccessful: 0, tableBody: null};
   }
 
-  handleChange = (event) => {
-    this.setState({[event.target.name]: event.target.value});
+  componentDidMount() {
+   this.IncidentList();
   }
 
-  handleSubmit = (event) => {
-    const requestPayload = { email: this.state.email, password: this.state.password }
-
-    fetch('http://localhost:4000/user/login', {
-      method: 'POST',
-      // Login api does not need to be auth, this header is for api requests that need auth
-      headers: {
-        'Authorization': 'Bearer' + localStorage.userToken
-      },
-      // We convert the React state to JSON and send it as the POST body
-      body: JSON.stringify(requestPayload)
-
-    }).then(response => {
-      // Store user and token returned by the backend with localStorage, fake the info for now
-      localStorage.setItem('currentUser', {user: 'fake', role: 'Admin'});
-      localStorage.setItem('userToken', 'asdfasdf24t2');
-      // Set loginSuccessful so that render() knows it should redirect to dashboard after login is loginSuccessful
-      this.setState({loginSuccessful: 1});
-      return response.json();
-    });
-
-    event.preventDefault();
+  IncidentItem(item) {
+    return (
+    <tr key={item.title}>
+      <td>{item.title}</td>
+      <td>{item.category}</td>
+      <td>{item.description}</td>
+      <td>{item.dateCreated}</td>
+      <td>{item.dateAssigned}</td>
+      <td>{item.state}</td>
+      <td>{item.pointOfContact}</td>
+      <td>{item.tags}</td>
+      <td>{item.currentAssignee}</td>
+      <td>
+      <a onClick={this.viewHandler} class="btn-gradient green mini">View</a>
+      <a onClick={this.editHandler} class="btn-gradient blue mini">Edit</a>
+      <a onClick={this.deleteHandler} class="btn-gradient red mini">Delete</a>
+      </td>
+  </tr>)
   }
-    render() {
+
+  async IncidentList () {
+    const response = await apiClient.get('/incident/');
+    const incidents = response.data.data;
+    const listItems = incidents.map((item) => this.IncidentItem(item));
+    this.setState({tableBody: (
+      <tbody>
+        {listItems}
+      </tbody>
+    )})
+  }
+
+  viewHandler(event) {
+
+  }
+
+  editHandler(event) {
+
+  }
+  
+  deleteHandler(event) {
+
+  }
+
+  render() {
       return (
-          <form onSubmit={this.handleSubmit}>
-              <h3>Dashboard</h3>
+        <div>
+          <h3>Welcome to the Dashboard</h3>
+          <table className="contentTable">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Date Created</th>
+                <th>Date Assigned</th>
+                <th>State</th>
+                <th>Point of Contact</th>
+                <th>Tags</th>
+                <th>Current Assignee</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            {this.state.tableBody}
 
-              <div className="form-group">
-                  <label>Email address</label>
-                  <input type="email" className="form-control" placeholder="Enter email" name="email" value={this.state.value} onChange={this.handleChange}/>
-              </div>
+          </table>
 
-              <div className="form-group">
-                  <label>Password</label>
-                  <input type="password" className="form-control" placeholder="Enter password" name="password" value={this.state.value} onChange={this.handleChange}/>
-              </div>
+        </div>
 
-              <div className="form-group">
-                  <div className="custom-control custom-checkbox">
-                      <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                      <label className="custom-control-label" htmlFor="customCheck1">Remember me</label>
-                  </div>
-              </div>
-
-              <button type="submit" className="btn btn-primary btn-block">Login</button>
-              <p className="forgot-password text-right">
-                  Forgot <a href="/reset-password">password?</a>
-              </p>
-          </form>
       );
     }
 }

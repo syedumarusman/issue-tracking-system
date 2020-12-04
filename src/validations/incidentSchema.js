@@ -8,7 +8,7 @@ const createSchema = Joi.object({
     dateResolved: Joi.date().required(),
     state: Joi.string().required(),
     pointOfContact: Joi.string().required(),
-    tags: Joi.string().required(),
+    tags: Joi.array().items(Joi.string()),
     currentAssignee: Joi.string().required(),
     caseHistory: Joi.array().items(Joi.string()).required()
 });

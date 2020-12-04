@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "axios": "^0.21.0",
     "boom": "^7.3.0",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
