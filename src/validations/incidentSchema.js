@@ -1,6 +1,7 @@
 const Joi = require('Joi');
 
 const createSchema = Joi.object({
+    title: Joi.string().required(),
     category: Joi.string().required(),
     description: Joi.string().required(),
     dateCreated: Joi.date().required(),

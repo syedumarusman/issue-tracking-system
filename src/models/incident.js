@@ -3,6 +3,7 @@ const { Schema } = require('mongoose');
 const mongoose = require('./db');
 
 const IncidentSchema = new Schema({
+    title: { type: String, required: true, unique: true },
     category: { type: String, required: true },    
     description: { type: String, required: true },
     dateCreated: { type: Date, required: true },

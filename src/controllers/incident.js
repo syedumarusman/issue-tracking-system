@@ -12,6 +12,7 @@ const getAll = async (ctx) => {
 
 const create = async (ctx) => {
     const payload = {
+        title: ctx.request.body.title,
         category: ctx.request.body.category,
         description: ctx.request.body.description,
         dateCreated: ctx.request.body.dateCreated,

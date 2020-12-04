@@ -7,7 +7,7 @@ const router = new Router({
 
 router.get('/', handler.getAll);
 
-// router.post('/', handler.create);
+router.post('/', handler.create);
 
 // router.put('/:userId', handler.update);
 
