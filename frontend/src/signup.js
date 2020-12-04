@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
+import { apiClient } from './_helpers/axios';
 
 export default class SignUp extends Component {
     constructor(props){
@@ -11,28 +12,30 @@ export default class SignUp extends Component {
         this.setState({[event.target.name]: event.target.value});
       }
     
-      handleSubmit = (event) => {
+      handleSubmit = async (event) => {
+        event.preventDefault();
         const requestPayload = { name: this.state.name, email: this.state.email, password: this.state.password }
 
         if (this.validate()){
 
-            fetch('http://localhost:4000/user/', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json"},
-            // Login api does not need to be auth, this header is for api requests that need auth
-            //    headers: {
-            //      'Authorization': 'Bearer' + localStorage.userToken
-            //    },
-            // We convert the React state to JSON and send it as the POST body
-            body: JSON.stringify(requestPayload)
+            await apiClient.post('/user/', requestPayload);
+            this.setState({signupSuccessful: 1});
+
+            // fetch('http://localhost:4000/user/', {
+            // method: 'POST',
+            // headers: { "Content-Type": "application/json"},
+            // // Login api does not need to be auth, this header is for api requests that need auth
+            // //    headers: {
+            // //      'Authorization': 'Bearer' + localStorage.userToken
+            // //    },
+            // // We convert the React state to JSON and send it as the POST body
+            // body: JSON.stringify(requestPayload)
         
-            }).then(response => {
-                this.setState({signupSuccessful: 1});
-                return response.json();
-            });
+            // }).then(response => {
+            //     return response.json();
+            // });
          }
     
-        event.preventDefault();
       }
 
       // Validate function - Validates both password and confirm password fields.

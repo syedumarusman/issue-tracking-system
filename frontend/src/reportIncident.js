@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import { Redirect } from 'react-router';
+import { Redirect } from 'react-router';
 // import { MDBChipsInput } from 'mdbreact';
 import { apiClient } from './_helpers/axios';
 
@@ -20,7 +20,8 @@ export default class ReportIncident extends Component {
                       currentAssignee: '',
                       categoryState: 'default', 
                       stateOption: 'default',
-                      errors: {}};
+                      errors: {},
+                      reportSuccessful: 0};
     }
 
     handleChange = (event) => {
@@ -42,6 +43,7 @@ export default class ReportIncident extends Component {
         }
         if (this.validate()) {
             const response = await apiClient.post('/incident/', requestPayload);
+            this.setState({reportSuccessful: 1})
         }
     }
 
@@ -80,8 +82,8 @@ export default class ReportIncident extends Component {
         }
 
         if (dateResolved === ""){
-            isValid = false;
-            errors["dateResolved"] = "Date resolved must be provided."
+            // isValid = false;
+            // errors["dateResolved"] = "Date resolved must be provided."
         }
 
         if (state === ""){
@@ -111,93 +113,95 @@ export default class ReportIncident extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <h3>Report Incident</h3>
-                <label>Tag</label>
-                <ChipsInputPage/>
-                <form onSubmit={this.handleSubmit}>
-                    <div className="form-row">
-                        <div className="form-group">
-                            {/* <label>Tag</label>
-                            <ChipsInputPage/> */}
+        if (this.state.reportSuccessful){
+            return <Redirect to='/dashboard'/>
+        } else {
+            return (
+                <div>
+                    <h3>Report Incident</h3>
+                    <label>Tag</label>
+                    <ChipsInputPage/>
+                    <form onSubmit={this.handleSubmit}>
+                        <div className="form-row">
+                            <div className="form-group">
+                                {/* <label>Tag</label>
+                                <ChipsInputPage/> */}
 
-                            <div className="text-danger">{this.state.errors.tags}</div>
+                                <div className="text-danger">{this.state.errors.tags}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Title</label>
+                                <input type="text" className="form-control" name="title" placeholder="Enter title" value={this.state.value} onChange={this.handleChange}/>
+
+                                <div className="text-danger">{this.state.errors.title}</div>
+                            </div>
+
+                            <div className="form-group col-md-6">
+                                <label>Category</label>
+                                <select className="form-control" name="category" value={this.state.optionsState} onChange={this.handleChange}>
+                                    <option value='default'>Select an option</option>
+                                    <option value='critical'>Critical</option>
+                                    <option value='high'>High</option>
+                                    <option value='medium'>Medium</option>
+                                    <option value='low'>Low</option>
+                                </select>
+
+                                <div className="text-danger">{this.state.errors.category}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Description</label>
+                                <input type="text" className="form-control" name="description" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
+
+                                <div className="text-danger">{this.state.errors.description}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Date Created</label>
+                                <input type="date" className="form-control" name="dateCreated" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
+
+                                <div className="text-danger">{this.state.errors.dateCreated}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Date Resolved</label>
+                                <input type="date" className="form-control" name="dateResolved" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
+                            </div>
+
+                            <div className="form-group col-md-5">
+                                <label>State</label>
+                                <select placeholder="Select an option" className="form-control" name="state" value={this.state.optionsState} onChange={this.handleChange}>
+                                    <option value='default'>Select</option>
+                                    <option value="open">Open</option>
+                                    <option value="inProgress">In-Progress</option>
+                                    <option value="done">Done</option>
+                                </select>
+
+                                <div className="text-danger">{this.state.errors.state}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Point of Contact</label>
+                                <input type="email" className="form-control" name="pointOfContact" placeholder="Enter employee email" value={this.state.value} onChange={this.handleChange}/>
+
+                                <div className="text-danger">{this.state.errors.pointOfContact}</div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Current assignee</label>
+                                <input type="email" className="form-control" name="currentAssignee" placeholder="Assigned Employee" value={this.state.value} onChange={this.handleChange}/>
+
+                                <div className="text-danger">{this.state.errors.currentAssignee}</div>
+                            </div>
+
                         </div>
 
-                        <div className="form-group">
-                            <label>Title</label>
-                            <input type="text" className="form-control" name="title" placeholder="Enter title" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.title}</div>
-                        </div>
-
-                        <div className="form-group col-md-6">
-                            <label>Category</label>
-                            <select className="form-control" name="category" value={this.state.optionsState} onChange={this.handleChange}>
-                                <option value='default'>Select an option</option>
-                                <option value='critical'>Critical</option>
-                                <option value='high'>High</option>
-                                <option value='medium'>Medium</option>
-                                <option value='low'>Low</option>
-                            </select>
-
-                            <div className="text-danger">{this.state.errors.category}</div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Description</label>
-                            <input type="text" className="form-control" name="description" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.description}</div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Date Created</label>
-                            <input type="date" className="form-control" name="dateCreated" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.dateCreated}</div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Date Resolved</label>
-                            <input type="date" className="form-control" name="dateResolved" placeholder="Enter description" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.dateResolved}</div>
-                        </div>
-
-                        <div className="form-group col-md-5">
-                            <label>State</label>
-                            <select placeholder="Select an option" className="form-control" name="state" value={this.state.optionsState} onChange={this.handleChange}>
-                                <option value='default'>Select</option>
-                                <option value="open">Open</option>
-                                <option value="inProgress">In-Progress</option>
-                                <option value="done">Done</option>
-                            </select>
-
-                            <div className="text-danger">{this.state.errors.state}</div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Point of Contact</label>
-                            <input type="email" className="form-control" name="pointOfContact" placeholder="Enter employee email" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.pointOfContact}</div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Current assignee</label>
-                            <input type="email" className="form-control" name="currentAssignee" placeholder="Assigned Employee" value={this.state.value} onChange={this.handleChange}/>
-
-                            <div className="text-danger">{this.state.errors.currentAssignee}</div>
-                        </div>
-
-                    </div>
-
-                    <button type="submit" className="btn btn-primary btn-block">Submit</button>
-                    
-                </form>                
-            </div>
-        );
+                        <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                        
+                    </form>                
+                </div>
+            );
+        }
     }
 }

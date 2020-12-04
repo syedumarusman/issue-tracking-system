@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
+import { apiClient } from './_helpers/axios';
 
 export default class Login extends Component {
   constructor(props){
@@ -11,28 +12,29 @@ export default class Login extends Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
+    event.preventDefault();
     const requestPayload = { email: this.state.email, password: this.state.password }
 
-    fetch('http://localhost:4000/user/login', {
-      method: 'POST',
-      headers: { "Content-Type": "application/json"},
-      // Login api does not need to be auth, this header is for api requests that need auth
-      // headers: {
-      //   'Authorization': 'Bearer' + localStorage.userToken
-      // },
-      // We convert the React state to JSON and send it as the POST body
-      body: JSON.stringify(requestPayload)
+    // fetch('http://localhost:4000/user/login', {
+    //   method: 'POST',
+    //   headers: { "Content-Type": "application/json"},
+    //   // Login api does not need to be auth, this header is for api requests that need auth
+    //   // headers: {
+    //   //   'Authorization': 'Bearer' + localStorage.userToken
+    //   // },
+    //   // We convert the React state to JSON and send it as the POST body
+    //   body: JSON.stringify(requestPayload)
 
-    }).then(response => {
-      // Store user and token returned by the backend with localStorage, fake the info for now
-      localStorage.setItem('currentUser', {user: 'fake', role: 'Admin'});
-      localStorage.setItem('userToken', 'asdfasdf24t2');
-
-      return response.json();
-    });
-
-    event.preventDefault();
+    // }).then(response => {
+    //   // Store user and token returned by the backend with localStorage, fake the info for now
+    //   localStorage.setItem('currentUser', {user: 'fake', role: 'Admin'});
+    //   localStorage.setItem('userToken', 'asdfasdf24t2');
+    
+    //   return response.json();
+    // });
+    await apiClient.post('/user/login', requestPayload);
+    this.setState({loginSuccessful: 1})
   }
     render() {
       // Login is successful, so we should have the homepage/dashboard

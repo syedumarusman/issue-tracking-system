@@ -1,10 +1,12 @@
 import React, { Component } from "react";
+import { Redirect } from 'react-router';
+import { Button } from 'react-bootstrap';
 import { apiClient } from './_helpers/axios';
 
 export default class Dashboard extends Component {
   constructor(props){
     super(props);
-    this.state = {email: '', password: '', loginSuccessful: 0, tableBody: null};
+    this.state = {redirect: false, tableBody: null};
   }
 
   componentDidMount() {
@@ -24,9 +26,9 @@ export default class Dashboard extends Component {
       <td>{item.tags}</td>
       <td>{item.currentAssignee}</td>
       <td>
-      <a onClick={this.viewHandler} class="btn-gradient green mini">View</a>
-      <a onClick={this.editHandler} class="btn-gradient blue mini">Edit</a>
-      <a onClick={this.deleteHandler} class="btn-gradient red mini">Delete</a>
+      <a onClick={this.viewHandler} className="btn-gradient green mini">View</a>
+      <a onClick={this.editHandler} className="btn-gradient blue mini">Edit</a>
+      <a onClick={this.deleteHandler} className="btn-gradient red mini">Delete</a>
       </td>
   </tr>)
   }
@@ -54,10 +56,22 @@ export default class Dashboard extends Component {
 
   }
 
+  setRedirect = () => {
+    this.setState({redirect: true})
+  }
+
+  renderRedirect = () => {
+    if(this.state.redirect){
+      return <Redirect to='/reportIncident'></Redirect>
+    }
+  }
+
   render() {
       return (
         <div>
+          {this.renderRedirect()}
           <h3>Welcome to the Dashboard</h3>
+          <Button variant="primary" onClick={this.setRedirect}>+ Create new incident</Button>
           <table className="contentTable">
             <thead>
               <tr>
