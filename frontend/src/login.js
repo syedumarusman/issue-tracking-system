@@ -5,7 +5,7 @@ import { apiClient } from './_helpers/axios';
 export default class Login extends Component {
   constructor(props){
     super(props);
-    this.state = {email: '', password: '', loginSuccessful: 0};
+    this.state = {email: '', password: '', loginSuccessful: 0, errors: {}};
   }
 
   handleChange = (event) => {
@@ -15,27 +15,43 @@ export default class Login extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     const requestPayload = { email: this.state.email, password: this.state.password }
+    let errors = {};
 
-    // fetch('http://localhost:4000/user/login', {
-    //   method: 'POST',
-    //   headers: { "Content-Type": "application/json"},
-    //   // Login api does not need to be auth, this header is for api requests that need auth
-    //   // headers: {
-    //   //   'Authorization': 'Bearer' + localStorage.userToken
-    //   // },
-    //   // We convert the React state to JSON and send it as the POST body
-    //   body: JSON.stringify(requestPayload)
-
-    // }).then(response => {
-    //   // Store user and token returned by the backend with localStorage, fake the info for now
-    //   localStorage.setItem('currentUser', {user: 'fake', role: 'Admin'});
-    //   localStorage.setItem('userToken', 'asdfasdf24t2');
-    
-    //   return response.json();
-    // });
-    await apiClient.post('/user/login', requestPayload);
-    this.setState({loginSuccessful: 1})
+    if (this.validate()){
+      const response = await apiClient.post('/user/login', requestPayload);
+      const responseError = response.data.meta.error;
+      
+      // Check if backend responds with error
+      if(responseError === undefined){
+        this.setState({loginSuccessful: 1});
+      } else {
+        errors["loginError"] = "Email or password is incorrect.";
+        this.setState({errors: errors});
+      } 
+    }
   }
+
+  validate = () => {
+    let email = this.state.email;
+    let password = this.state.password;
+    let errors = {};
+    let isValid = true;
+
+    if (email === ""){
+      isValid = false;
+      errors["email"] = "Email is required."
+    }
+    
+    if (password === ""){
+      isValid = false;
+      errors["password"] = "Password is required."
+    }
+
+    this.setState({errors: errors});
+
+    return isValid;
+  }
+
     render() {
       // Login is successful, so we should have the homepage/dashboard
       if (this.state.loginSuccessful){
@@ -46,13 +62,20 @@ export default class Login extends Component {
                 <h3>Login</h3>
 
                 <div className="form-group">
+                    <div className="text-danger">{this.state.errors.loginError}</div>
+
+
                     <label>Email address</label>
                     <input type="email" className="form-control" placeholder="Enter email" name="email" value={this.state.value} onChange={this.handleChange}/>
+
+                    <div className="text-danger">{this.state.errors.email}</div>
                 </div>
 
                 <div className="form-group">
                     <label>Password</label>
                     <input type="password" className="form-control" placeholder="Enter password" name="password" value={this.state.value} onChange={this.handleChange}/>
+
+                    <div className="text-danger">{this.state.errors.password}</div>
                 </div>
 
                 <div className="form-group">

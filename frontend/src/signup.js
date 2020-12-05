@@ -20,38 +20,44 @@ export default class SignUp extends Component {
 
             await apiClient.post('/user/', requestPayload);
             this.setState({signupSuccessful: 1});
-
-            // fetch('http://localhost:4000/user/', {
-            // method: 'POST',
-            // headers: { "Content-Type": "application/json"},
-            // // Login api does not need to be auth, this header is for api requests that need auth
-            // //    headers: {
-            // //      'Authorization': 'Bearer' + localStorage.userToken
-            // //    },
-            // // We convert the React state to JSON and send it as the POST body
-            // body: JSON.stringify(requestPayload)
-        
-            // }).then(response => {
-            //     return response.json();
-            // });
          }
     
       }
 
       // Validate function - Validates both password and confirm password fields.
       validate = () => {
+          let name = this.state.name;
+          let email = this.state.email;
           let password = this.state.password;
           let confirmPassword = this.state.confirmPassword;
           let errors = {};
           let isValid = true;
 
-          if (password !== "undefined" && confirmPassword !== "undefined"){
-              if (password !== confirmPassword){
-
-                isValid = false;
-                errors["password"] = "Passwords don't match.";
-              }
+          if (name === ""){
+              isValid = false;
+              errors["name"] = "Name is required.";
           }
+
+          if (email === ""){
+              isValid = false;
+              errors["email"] = "Email is required.";
+          }
+
+          if (password === ""){
+              isValid = false;
+              errors["password"] = "Password is required.";
+          }
+
+          if (confirmPassword === ""){
+              isValid = false;
+              errors["confirmPassword"] = "Confirm Password is required.";
+          }
+          
+          if (password !== confirmPassword){
+            isValid = false;
+            errors["password"] = "Passwords don't match.";
+          }
+
           // Update the state errors.
           this.setState({errors: errors});
 
@@ -70,11 +76,15 @@ export default class SignUp extends Component {
                     <div className="form-group">
                         <label>Full Name</label>
                         <input type="text" className="form-control" name="name" placeholder="Full name" value={this.state.value} onChange={this.handleChange}/>
+
+                        <div className="text-danger">{this.state.errors.name}</div>
                     </div>
 
                     <div className="form-group">
                         <label>Email address</label>
                         <input type="email" className="form-control" name="email" placeholder="Enter email" value={this.state.value} onChange={this.handleChange}/>
+
+                        <div className="text-danger">{this.state.errors.email}</div>
                     </div>
 
                     <div className="form-group">
@@ -88,6 +98,8 @@ export default class SignUp extends Component {
                     <div className="form-group">
                         <label>Confirm Password</label>
                         <input type="password" className="form-control" name="confirmPassword" placeholder="Enter password" value={this.state.value} onChange={this.handleChange}/>
+
+                        <div className="text-danger">{this.state.errors.confirmPassword}</div>
                     </div>
 
                     <button type="submit" className="btn btn-primary btn-block" >Sign Up</button>
