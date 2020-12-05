@@ -17,6 +17,10 @@ export default class Login extends Component {
     const requestPayload = { email: this.state.email, password: this.state.password }
     let errors = {};
 
+        localStorage.setItem('token', 'asdfasdf24t2');
+        localStorage.setItem('userId', '234234');
+        localStorage.setItem('userName', 'Nam Nam');
+        localStorage.setItem('userRole', 'admin');
     if (this.validate()){
       const response = await apiClient.post('/user/login', requestPayload);
       const responseError = response.data.meta.error;
@@ -24,6 +28,7 @@ export default class Login extends Component {
       // Check if backend responds with error
       if(responseError === undefined){
         this.setState({loginSuccessful: 1});
+
       } else {
         errors["loginError"] = "Email or password is incorrect.";
         this.setState({errors: errors});
