@@ -5,6 +5,10 @@ import { apiClient } from './_helpers/axios';
 
 import ChipsInputPage from "./tagComponent.js";
 
+import 'jquery/src/jquery.js';
+import 'bootstrap4-tagsinput/tagsinput.js';
+import 'bootstrap4-tagsinput/tagsinput.css';
+
 export default class ReportIncident extends Component {
     
     constructor(props){
@@ -128,6 +132,8 @@ export default class ReportIncident extends Component {
                                 <ChipsInputPage/> */}
 
                                 <div className="text-danger">{this.state.errors.tags}</div>
+                                <input type="text" className="form-control" name="tags" data-role="tagsinput" placeholder="Enter tags" value={this.state.value} onChange={this.handleChange}/>
+
                             </div>
 
                             <div className="form-group">

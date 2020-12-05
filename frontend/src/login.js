@@ -16,11 +16,11 @@ export default class Login extends Component {
     event.preventDefault();
     const requestPayload = { email: this.state.email, password: this.state.password }
     let errors = {};
-
-        localStorage.setItem('token', 'asdfasdf24t2');
-        localStorage.setItem('userId', '234234');
-        localStorage.setItem('userName', 'Nam Nam');
-        localStorage.setItem('userRole', 'admin');
+//hard coded to test, remove it
+localStorage.setItem('token', 'asdfasdf24t2');
+localStorage.setItem('userId', '234234');
+localStorage.setItem('userName', 'Nam Nam');
+localStorage.setItem('userRole', 'admin');
     if (this.validate()){
       const response = await apiClient.post('/user/login', requestPayload);
       const responseError = response.data.meta.error;
