@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
-// import { MDBChipsInput } from 'mdbreact';
 import { apiClient } from './_helpers/axios';
-
-import ChipsInputPage from "./tagComponent.js";
+import { MDBChipsInput } from 'mdbreact';
+//import ChipsInputPage from "./tagComponent.js";
 
 import 'jquery/src/jquery.js';
 import 'bootstrap4-tagsinput/tagsinput.js';
 import 'bootstrap4-tagsinput/tagsinput.css';
 
 export default class ReportIncident extends Component {
-    
     constructor(props){
         super(props);
         this.state = {title: '',
@@ -123,14 +121,11 @@ export default class ReportIncident extends Component {
             return (
                 <div>
                     <h3>Report Incident</h3>
-                    <label>Tag</label>
-                    <ChipsInputPage/>
+
                     <form onSubmit={this.handleSubmit}>
                         <div className="form-row">
                             <div className="form-group">
-                                {/* <label>Tag</label>
-                                <ChipsInputPage/> */}
-
+                                <label>Tag</label>
                                 <div className="text-danger">{this.state.errors.tags}</div>
                                 <input type="text" className="form-control" name="tags" data-role="tagsinput" placeholder="Enter tags" value={this.state.value} onChange={this.handleChange}/>
 

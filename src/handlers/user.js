@@ -26,9 +26,9 @@ const loginUser = async (payload) => {
     if (error) {
         throw error;
     }
-    const user = await User.findOne({ email: payload.email })
+    const user = await User.findOne({ email: payload.email, password: payload.password })
     if (!user) {
-        throw Boom.badRequest(`User with "${payload.email}" email does not exist`);
+        throw Boom.badRequest("Email or password is incorrect.");
     }
     const token = jwt.sign(user.toJSON(), JWT_SECRET_KEY, { expiresIn: 3600 })
     const userDetails = {

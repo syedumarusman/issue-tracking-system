@@ -5,7 +5,6 @@ const apiClient = axios.create({
   // baseURL: 'http://its2.herokuapp.com'
   baseURL: 'http://localhost:4000'
 });
-//Send authorization token with every backend request if the token exists
 if (localStorage.token) {
 	apiClient.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.token;
 }

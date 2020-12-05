@@ -27,10 +27,11 @@ localStorage.setItem('userRole', 'admin');
       
       // Check if backend responds with error
       if(responseError === undefined){
+        localStorage.setItem("token", response.data.meta.token)
         this.setState({loginSuccessful: 1});
 
       } else {
-        errors["loginError"] = "Email or password is incorrect.";
+        errors["loginError"] = response.data.meta.message;
         this.setState({errors: errors});
       } 
     }
