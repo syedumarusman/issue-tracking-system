@@ -1,7 +1,14 @@
 const IncidentHandler = require('../handlers/incident');
 
 const getAll = async (ctx) => {
-    const response = await IncidentHandler.getAll();
+    filterPayload = {
+        title: ctx.query.title,
+        category: ctx.query.category,
+        state: ctx.query.state,
+        pointOfContact: ctx.query.pointOfContact,
+        tags: ctx.query.tags
+    }
+    const response = await IncidentHandler.getAll(filterPayload);
     ctx.body = {
         meta: {
             status: 200

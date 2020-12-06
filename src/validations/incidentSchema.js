@@ -1,5 +1,13 @@
 const Joi = require('Joi');
 
+const getAllSchema = Joi.object({
+    title: Joi.string().required(),
+    category: Joi.string().required(),
+    state: Joi.string().required(),
+    pointOfContact: Joi.string().required(),
+    tags: Joi.array().items(Joi.string())
+})
+
 const createSchema = Joi.object({
     title: Joi.string().required(),
     category: Joi.string().required(),
@@ -13,4 +21,4 @@ const createSchema = Joi.object({
     caseHistory: Joi.array().items(Joi.string()).required()
 });
 
-module.exports = { createSchema }
+module.exports = { createSchema, getAllSchema }

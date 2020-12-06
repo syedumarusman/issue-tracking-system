@@ -16,7 +16,6 @@ const sendEmail = async (user) => {
     const info = await transporter.sendMail({
         from: '"Support Staff" <issuetracker2020@gmail.com>', // sender address
         to: user.email, // list of receivers
-        // to: email, // list of receivers
         subject: "Password Reset Notification", // Subject line
         html: `<img src="cid:unique@kreata.ee"/><br><br>
         Hello ${user.name},<br><br>

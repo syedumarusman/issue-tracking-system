@@ -49,8 +49,8 @@ const create = async (payload) => {
     if (user) {
         throw Boom.badRequest('This User already exists');
     }
-    await User.create(payload);
-    return user;
+    const response = await User.create(payload);
+    return response;
 }
 
 const resetPassword = async (payload) => {
