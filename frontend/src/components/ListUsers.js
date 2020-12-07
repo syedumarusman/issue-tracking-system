@@ -72,19 +72,19 @@ export default class ListUsers extends Component {
   }
 
   setRedirect = () => {
-    this.setState({redirect: true})
+    this.setState({redirect: '/anyURL'})
   }
 
-  renderRedirect = (toUrl) => {
+  renderRedirect = () => {
     if(this.state.redirect){
-      return <Redirect to={toUrl}></Redirect>
+      return <Redirect to={this.state.redirect}></Redirect>
     }
   }
 
   render() {
       return (
         <div>
-          {this.renderRedirect('/ListUsers')}
+          {this.renderRedirect()}
           <h3>Users</h3>
           <table className="contentTable">
             {this.TableHeader()}

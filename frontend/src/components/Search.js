@@ -2,14 +2,15 @@ import React, { Component } from "react";
 import { Redirect } from 'react-router';
 import { apiClient } from '../_helpers/axios';
 
-export default class ListUsers extends Component {
+export default class Search extends Component {
   constructor(props){
     super(props);
     this.state = {redirect: false, tableBody: null};
   }
 
   componentDidMount() {
-   this.TableBody();
+    alert("Search for "+ this.props.match.params.query +" in "+ this.props.match.params.scope);
+    this.TableBody();
   }
 
   TableHeader(item) {
@@ -72,20 +73,20 @@ export default class ListUsers extends Component {
   }
 
   setRedirect = () => {
-    this.setState({redirect: true})
+    this.setState({redirect: '/anyURL'})
   }
 
-  renderRedirect = (toUrl) => {
+  renderRedirect = () => {
     if(this.state.redirect){
-      return <Redirect to={toUrl}></Redirect>
+      return <Redirect to={this.state.redirect}></Redirect>
     }
   }
 
   render() {
       return (
         <div>
-          {this.renderRedirect('/ListUsers')}
-          <h3>Users</h3>
+          {this.renderRedirect()}
+          <h3>Search for {this.props.match.params.query} in {this.props.match.params.scope}</h3>
           <table className="contentTable">
             {this.TableHeader()}
             {this.state.tableBody}
