@@ -125,7 +125,7 @@ export default class ReportIncident extends Component {
             return <Redirect to='/dashboard'/>
         } else {
             return (
-                <div>
+                <div className="">
                     <h3>Report Incident</h3>
 
                     <form onSubmit={this.handleSubmit}>
@@ -195,12 +195,16 @@ export default class ReportIncident extends Component {
                                 <div className="text-danger">{this.state.errors.pointOfContact}</div>
                             </div>
 
-                            <div className="form-group">
-                                <label>Current assignee</label>
-                                <input type="email" className="form-control" name="currentAssignee" placeholder="Assigned Employee" value={this.state.value} onChange={this.handleChange}/>
+                            {localStorage.userRole === 'Employee' || localStorage.userRole === 'admin' &&
+                                <React.Fragment>
+                                    <div className="form-group">
+                                        <label>Current assignee</label>
+                                        <input type="email" className="form-control" name="currentAssignee" placeholder="Assigned Employee" value={this.state.value} onChange={this.handleChange}/>
 
-                                <div className="text-danger">{this.state.errors.currentAssignee}</div>
-                            </div>
+                                        <div className="text-danger">{this.state.errors.currentAssignee}</div>
+                                    </div>
+                                </React.Fragment>
+                            }        
 
                         </div>
 
