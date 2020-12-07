@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
 import { apiClient } from './_helpers/axios';
-import { MDBChipsInput } from 'mdbreact';
-//import ChipsInputPage from "./tagComponent.js";
 
 import 'jquery/src/jquery.js';
 import 'bootstrap4-tagsinput/tagsinput.js';
@@ -119,7 +117,7 @@ export default class ReportIncident extends Component {
             return <Redirect to='/dashboard'/>
         } else {
             return (
-                <div>
+                <div className="">
                     <h3>Report Incident</h3>
 
                     <form onSubmit={this.handleSubmit}>
