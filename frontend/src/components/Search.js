@@ -43,13 +43,13 @@ export default class Search extends Component {
 
   async TableBody () {
     //test data, this should be provided by backend
-    const incidents = [
-        { _id: 1, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-        { _id: 2, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-        { _id: 3, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-    ]; 
-    //const response = await apiClient.get('/incident/');
-    //const incidents = response.data.data;
+    // const incidents = [
+    //     { _id: 1, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
+    //     { _id: 2, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
+    //     { _id: 3, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
+    // ]; 
+    const response = await apiClient.get('/user/');
+    const incidents = response.data.data;
     const tableItems = incidents.map((item) => this.TableItem(item));
     const tableHeader = this.TableHeader();
     this.setState({tableBody: (

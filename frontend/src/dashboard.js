@@ -1,25 +1,59 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import { apiClient } from './_helpers/axios';
+
+
+import { Navbar, Nav, NavDropdown, FormControl, Dropdown } from 'react-bootstrap';
+
 
 export default class Dashboard extends Component {
   constructor(props){
     super(props);
-    this.state = {redirect: false, tableBody: null, userRole: localStorage.getItem("userRole"), categoryFilter: 'default', show: false};
+    this.state = {tableBody: null, userRole: localStorage.getItem("userRole"), categoryFilter: 'default', show: false, incidentId: '', apiResponse: ''};
   }
 
-  handleShow = () => {
+  handleShow = (event) => {
+    // console.log(event.target.value)
+    const requestPayload = { title: event.target.value }
+
     this.setState({show: true})
+
+    apiClient.get('/incident/', requestPayload).then((response) => {
+      //console.log(response.data.data[0]["caseHistory"][0])
+      this.setState({apiResponse: response.data.data[0]})
+    });
+    // console.log(response)
   }
 
   handleClose = () => {
     this.setState({show: false})
   }
 
-  componentDidMount() {
-   this.IncidentList();
-  }
+  //componentDidMount() {
+    // const scope = this.props.match.params.scope
+    // const query = this.props.match.params.query
+    
+    // const requestPayload = { scope: scope, query: query }
+    // console.log(requestPayload)
+
+    // alert("Search for "+ this.props.match.params.query +" in "+ this.props.match.params.scope);
+    // apiClient.get('/incident/').then((response) => {
+      
+    //   // Umar - Backend should handle post for searching --------------------------------------------------------------------
+
+    //   const incidents = response.data.data;
+    //   if (incidents !== undefined){
+    //     var listItems = incidents.map((item) => this.IncidentItem(item));
+    //     this.setState({tableBody: (
+    //       <tbody>
+    //         {listItems}
+    //       </tbody>
+    //     )})
+    //   }
+    // });
+   //this.IncidentList();
+  //}
 
   IncidentItem(item) {
     if (this.state.categoryFilter === item.category || this.state.categoryFilter === "default"){
@@ -36,9 +70,13 @@ export default class Dashboard extends Component {
       <td>{item.tags}</td>
       <td>{item.currentAssignee}</td>
       <td>
-      <a onClick={() => this.viewHandler(item)} className="btn-gradient green mini">View</a>
-      <a style={this.state.userRole === 'customer' ? { display: 'none' }: {} } onClick={this.deleteHandler} className="btn-gradient red mini">Delete</a>
-      <a style={this.state.userRole === 'customer' ? { display: 'none' }: {} } onClick={() => this.this.editHandler(item)} className="btn-gradient blue mini">Edit</a>
+      <button onClick={this.handleShow} value={item.title} className="btn-gradient btn green mini">View</button>
+      {localStorage.userRole ==='customer' || 
+      <a href={"/reportIncident/"+ item._id} className="btn btn-gradient blue mini text-white">Edit</a>
+      }
+      {localStorage.userRole ==='customer' || 
+       <button onClick={this.deleteHandler} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>
+      } 
       </td>
   </tr>)
     }
@@ -46,13 +84,16 @@ export default class Dashboard extends Component {
 
   async IncidentList () {
     const response = await apiClient.get('/incident/');
+    console.log(response)
     const incidents = response.data.data;
-    var listItems = incidents.map((item) => this.IncidentItem(item));
-    this.setState({tableBody: (
-      <tbody>
-        {listItems}
-      </tbody>
-    )})
+    if (incidents !== undefined){
+      var listItems = incidents.map((item) => this.IncidentItem(item));
+      this.setState({tableBody: (
+        <tbody>
+          {listItems}
+        </tbody>
+      )})
+    }
   }
 
   handleChange = (event) => {
@@ -60,44 +101,49 @@ export default class Dashboard extends Component {
     this.IncidentList();
   }
 
-  viewHandler = (item) => {
-    console.log(item) 
-    this.handleShow();
+  viewHandler = () => {
+
     return(
     <Modal show={this.state.show} onHide={this.handleClose}>
       <Modal.Header>
-        <Modal.Title> Modal Heading</Modal.Title>
+    <Modal.Title> {this.state.apiResponse && this.state.apiResponse["title"]}</Modal.Title>
       </Modal.Header>
-      <Modal.Body> The body of the Modal </Modal.Body>
+      <Modal.Body> {this.state.apiResponse && this.state.apiResponse["caseHistory"][0]} 
+      <form onSubmit={this.handleSubmit}>
+                        <Form.Group controlId="exampleForm.ControlTextarea1">
+                          <Form.Label>Add a comment:</Form.Label>
+                          <Form.Control as="textarea" rows="3" />
+                        </Form.Group>
+
+                    <button type="submit" className="btn btn-primary btn-block">Submit</button>
+                </form>
+      </Modal.Body>
       <Modal.Footer></Modal.Footer>
     </Modal>
     );
   }
 
-  editHandler = (item) => {
+  editHandler = (event) => {
+    const requestPayload = { title: event.target.value }
+
+    apiClient.get('/incident/', requestPayload).then((response) => {
+      //console.log(response.data.data[0]["caseHistory"][0])
+      this.setState({apiResponse: response.data.data[0]})
+    });
 
   }
   
-  deleteHandler = (item) => {
-
-  }
-
-  setRedirect = () => {
-    this.setState({redirect: true})
-  }
-
-  renderRedirect = () => {
-    if(this.state.redirect){
-      return <Redirect to='/reportIncident'></Redirect>
-    }
+  deleteHandler = (event) => {
+    const requestPayload = { title: event.target.value }
+    apiClient.delete('/incident/', { data: { title: event.target.value } } );
   }
 
   render() {
     return (
       <div>
-          {this.renderRedirect()}
+          {this.viewHandler()}
           <h3>Welcome to the Dashboard</h3>
-          <Button variant="primary" onClick={this.setRedirect}>+ Create new incident</Button>
+          <Button variant="primary" href='/reportIncident'onClick={this.setRedirect}>+ Create new incident</Button>
 
           <div className='form-row'>
             <div className="form-group col-md-2">

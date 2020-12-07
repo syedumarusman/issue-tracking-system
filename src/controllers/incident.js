@@ -8,7 +8,7 @@ const getAll = async (ctx) => {
         pointOfContact: ctx.query.pointOfContact,
         tags: ctx.query.tags
     }
-    console.log(ctx)
+    //console.log(ctx)
     const token = ctx.request.header.authorization;
     //console.log(token)
     const response = await IncidentHandler.getAll(filterPayload, token);

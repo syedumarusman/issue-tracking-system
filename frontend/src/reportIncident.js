@@ -26,6 +26,13 @@ export default class ReportIncident extends Component {
 
     }
 
+    componentDidMount(){
+        // console.log(this.props.match.params.id);
+        const incidentId = this.props.match.params.id;
+
+        // Umar backend implement Incident Handler update and get incident by Id ------------------------------------------------------
+    }
+
     handleChange = (event) => {
         this.setState({[event.target.name]: event.target.value});
     }
@@ -58,7 +65,7 @@ export default class ReportIncident extends Component {
         let dateResolved = this.state.dateResolved;
         let state = this.state.state;
         let pointOfContact = this.state.pointOfContact;
-        // let tags = this.state.tags; // DONT DO FOR NOW
+        let tags = this.state.tags; // DONT DO FOR NOW
         let currentAssignee = this.state.currentAssignee;
         
         let errors = {};
@@ -100,10 +107,10 @@ export default class ReportIncident extends Component {
         }
 
         // TAGS NOT WORKING
-        // if (tags === ""){
-        //     isValid = false;
-        //     errors["tags"] = "Tags must be provided."
-        // }
+        if (tags === ""){
+            isValid = false;
+            errors["tags"] = "Tags must be provided."
+        }
 
         if (currentAssignee === ""){
             isValid = false;
