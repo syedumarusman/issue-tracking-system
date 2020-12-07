@@ -16,24 +16,25 @@ export default class Login extends Component {
     event.preventDefault();
     const requestPayload = { email: this.state.email, password: this.state.password }
     let errors = {};
-//hard coded to test, remove it
-localStorage.setItem('token', 'asdfasdf24t2');
-localStorage.setItem('userId', '234234');
-localStorage.setItem('userName', 'Nam Nam');
-localStorage.setItem('userRole', 'admin');
-    if (this.validate()){
-      const response = await apiClient.post('/user/login', requestPayload);
-      const responseError = response.data.meta.error;
-      
-      // Check if backend responds with error
-      if(responseError === undefined){
-        localStorage.setItem("token", response.data.meta.token)
-        this.setState({loginSuccessful: 1});
 
-      } else {
-        errors["loginError"] = response.data.meta.message;
-        this.setState({errors: errors});
-      } 
+    if (this.validate()){
+      const response = await apiClient.post('/user/login', requestPayload).
+      then((response) => {
+        const responseError = response.data.meta.error;
+        if(responseError === undefined){
+          localStorage.setItem("token", response.data.meta.token)
+          localStorage.setItem("userId", response.data.result.userId)
+          localStorage.setItem("userName", response.data.result.name)
+          localStorage.setItem("userRole", response.data.result.role)
+          
+          this.setState({loginSuccessful: 1});  
+
+        } else {
+          errors["loginError"] = response.data.meta.message;
+          this.setState({errors: errors});
+        }
+      });
+      
     }
   }
 

@@ -1,12 +1,20 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { apiClient } from './_helpers/axios';
 
 export default class Dashboard extends Component {
   constructor(props){
     super(props);
-    this.state = {redirect: false, tableBody: null};
+    this.state = {redirect: false, tableBody: null, userRole: localStorage.getItem("userRole"), categoryFilter: 'default', show: false};
+  }
+
+  handleShow = () => {
+    this.setState({show: true})
+  }
+
+  handleClose = () => {
+    this.setState({show: false})
   }
 
   componentDidMount() {
@@ -14,6 +22,8 @@ export default class Dashboard extends Component {
   }
 
   IncidentItem(item) {
+    if (this.state.categoryFilter === item.category || this.state.categoryFilter === "default"){
+
     return (
     <tr key={item.title}>
       <td>{item.title}</td>
@@ -26,17 +36,18 @@ export default class Dashboard extends Component {
       <td>{item.tags}</td>
       <td>{item.currentAssignee}</td>
       <td>
-      <a onClick={this.viewHandler} className="btn-gradient green mini">View</a>
-      <a onClick={this.editHandler} className="btn-gradient blue mini">Edit</a>
-      <a onClick={this.deleteHandler} className="btn-gradient red mini">Delete</a>
+      <a onClick={() => this.viewHandler(item)} className="btn-gradient green mini">View</a>
+      <a style={this.state.userRole === 'customer' ? { display: 'none' }: {} } onClick={this.deleteHandler} className="btn-gradient red mini">Delete</a>
+      <a style={this.state.userRole === 'customer' ? { display: 'none' }: {} } onClick={() => this.this.editHandler(item)} className="btn-gradient blue mini">Edit</a>
       </td>
   </tr>)
+    }
   }
 
   async IncidentList () {
     const response = await apiClient.get('/incident/');
     const incidents = response.data.data;
-    const listItems = incidents.map((item) => this.IncidentItem(item));
+    var listItems = incidents.map((item) => this.IncidentItem(item));
     this.setState({tableBody: (
       <tbody>
         {listItems}
@@ -44,15 +55,30 @@ export default class Dashboard extends Component {
     )})
   }
 
-  viewHandler(event) {
-
+  handleChange = (event) => {
+    this.setState({[event.target.name]: event.target.value});
+    this.IncidentList();
   }
 
-  editHandler(event) {
+  viewHandler = (item) => {
+    console.log(item) 
+    this.handleShow();
+    return(
+    <Modal show={this.state.show} onHide={this.handleClose}>
+      <Modal.Header>
+        <Modal.Title> Modal Heading</Modal.Title>
+      </Modal.Header>
+      <Modal.Body> The body of the Modal </Modal.Body>
+      <Modal.Footer></Modal.Footer>
+    </Modal>
+    );
+  }
+
+  editHandler = (item) => {
 
   }
   
-  deleteHandler(event) {
+  deleteHandler = (item) => {
 
   }
 
@@ -67,11 +93,33 @@ export default class Dashboard extends Component {
   }
 
   render() {
-      return (
-        <div>
+    return (
+      <div>
           {this.renderRedirect()}
           <h3>Welcome to the Dashboard</h3>
           <Button variant="primary" onClick={this.setRedirect}>+ Create new incident</Button>
+
+          <div className='form-row'>
+            <div className="form-group col-md-2">
+              <label>Filter by Category</label>
+              <select placeholder="Select an option" className="form-control" name="categoryFilter" onChange={this.handleChange}>
+                  <option value='default'>No Filter</option>
+                  <option value="critical">Critical</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+              </select>
+            </div>
+
+            <div className="form-group col-md-2">
+              <label>Filter by Point of Contact</label>
+              <select placeholder="Select an option" className="form-control" name="categoryFilter" onChange={this.handleChange}>
+                  <option value='default'>Select an option</option>
+                  <option value="critical">Critical</option>
+              </select>
+            </div>
+          </div>
+
           <table className="contentTable">
             <thead>
               <tr>
@@ -90,9 +138,7 @@ export default class Dashboard extends Component {
             {this.state.tableBody}
 
           </table>
-
         </div>
-
       );
     }
 }

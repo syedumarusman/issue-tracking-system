@@ -12,7 +12,7 @@ export const PrivateRoute = ({ component: Component, roles, ...rest }) => (
         if (roles && roles.indexOf(localStorage.userRole) === -1) {
             // role not authorised so redirect to home page
             return <Redirect to={{ pathname: '/'}} />
-        }
+        } 
 
         // authorised so return component
         return <Component {...props} />

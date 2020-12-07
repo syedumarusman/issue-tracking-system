@@ -1,10 +1,10 @@
 const Joi = require('Joi');
 
 const getAllSchema = Joi.object({
-    title: Joi.string().required(),
-    category: Joi.string().required(),
-    state: Joi.string().required(),
-    pointOfContact: Joi.string().required(),
+    title: Joi.string(),
+    category: Joi.string(),
+    state: Joi.string(),
+    pointOfContact: Joi.string(),
     tags: Joi.array().items(Joi.string())
 })
 

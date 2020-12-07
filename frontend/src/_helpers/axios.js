@@ -5,7 +5,7 @@ const apiClient = axios.create({
   // baseURL: 'http://its2.herokuapp.com'
   baseURL: 'http://localhost:4000'
 });
-if (localStorage.token) {
-	apiClient.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.token;
-}
+
+apiClient.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.token;
+
 export { apiClient };

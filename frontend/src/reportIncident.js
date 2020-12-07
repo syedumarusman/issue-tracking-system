@@ -1,16 +1,15 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
 import { apiClient } from './_helpers/axios';
-import { MDBChipsInput } from 'mdbreact';
-//import ChipsInputPage from "./tagComponent.js";
 
-import 'jquery/src/jquery.js';
-import 'bootstrap4-tagsinput/tagsinput.js';
-import 'bootstrap4-tagsinput/tagsinput.css';
+import 'jquery/src/jquery.js'
+import "./tagComponents/tagsinput.js"
+import "./tagComponents/tagsinput.css"
 
 export default class ReportIncident extends Component {
     constructor(props){
-        super(props);
+        super(props)
+
         this.state = {title: '',
                       category: '', 
                       description: '',
@@ -24,6 +23,7 @@ export default class ReportIncident extends Component {
                       stateOption: 'default',
                       errors: {},
                       reportSuccessful: 0};
+
     }
 
     handleChange = (event) => {
@@ -45,6 +45,7 @@ export default class ReportIncident extends Component {
         }
         if (this.validate()) {
             const response = await apiClient.post('/incident/', requestPayload);
+            console.log(this.state.tags)
             this.setState({reportSuccessful: 1})
         }
     }
@@ -57,7 +58,7 @@ export default class ReportIncident extends Component {
         let dateResolved = this.state.dateResolved;
         let state = this.state.state;
         let pointOfContact = this.state.pointOfContact;
-        //let tags = this.state.tags; // DONT DO FOR NOW
+        // let tags = this.state.tags; // DONT DO FOR NOW
         let currentAssignee = this.state.currentAssignee;
         
         let errors = {};
@@ -114,6 +115,11 @@ export default class ReportIncident extends Component {
         return isValid;
     }
 
+    handleKeypress = () => {
+        window.location.reload();
+
+    }
+
     render() {
         if (this.state.reportSuccessful){
             return <Redirect to='/dashboard'/>
@@ -123,13 +129,13 @@ export default class ReportIncident extends Component {
                     <h3>Report Incident</h3>
 
                     <form onSubmit={this.handleSubmit}>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label>Tag</label>
-                                <div className="text-danger">{this.state.errors.tags}</div>
-                                <input type="text" className="form-control" name="tags" data-role="tagsinput" placeholder="Enter tags" value={this.state.value} onChange={this.handleChange}/>
 
-                            </div>
+                        <div className="form-group">
+                            <label>Tag</label>
+                            <div className="text-danger">{this.state.errors.tags}</div>
+                            <input type="text" className="form-control" name="tags" data-role="tagsinput" placeholder="Enter tags" value={this.state.value} onChange={this.handleChange} />
+                        </div>
+                        <div className="form-row">
 
                             <div className="form-group">
                                 <label>Title</label>

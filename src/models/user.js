@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     password: { type: String, required: true },
     role: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    incidents: [{ type: Schema.Types.ObjectId, ref: 'Incident', default: [] }],
+    incidents: [{ type: Schema.Types.ObjectId, ref: 'Incident' }],
 }, {
         collection: 'user', versionKey: false
 });

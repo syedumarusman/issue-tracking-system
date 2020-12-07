@@ -8,7 +8,10 @@ const getAll = async (ctx) => {
         pointOfContact: ctx.query.pointOfContact,
         tags: ctx.query.tags
     }
-    const response = await IncidentHandler.getAll(filterPayload);
+    console.log(ctx)
+    const token = ctx.request.header.authorization;
+    //console.log(token)
+    const response = await IncidentHandler.getAll(filterPayload, token);
     ctx.body = {
         meta: {
             status: 200
@@ -30,7 +33,8 @@ const create = async (ctx) => {
         currentAssignee: ctx.request.body.currentAssignee,
         caseHistory: []
     }
-    const response = await IncidentHandler.create(payload);
+    const token = ctx.request.header.authorization;
+    const response = await IncidentHandler.create(payload, token);
     ctx.body = {
         meta: {
             status: 200
