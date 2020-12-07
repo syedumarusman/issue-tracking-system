@@ -113,6 +113,7 @@ export default class App extends Component {
 						<PrivateRoute path="/dashboard" component={Dashboard} />
 						<PrivateRoute path="/search/:scope/:query" component={Dashboard} />
 						<PrivateRoute path="/reportIncident/:id" roles={['admin', 'employee', 'customer']} component={ReportIncident} />
+						<PrivateRoute path="/reportIncident/" roles={['admin', 'employee', 'customer']} component={ReportIncident} />
 						<PrivateRoute path="/EditUser/:id" roles={['admin']} component={EditUser} />
 						<PrivateRoute path="/ListUsers" roles={['admin']} component={ListUsers} />
 						<PrivateRoute path="/CreateCategory" roles={['admin']} component={CreateCategory} />

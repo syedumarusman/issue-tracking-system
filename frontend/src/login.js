@@ -27,6 +27,7 @@ export default class Login extends Component {
           localStorage.setItem("userId", response.data.result.userId)
           localStorage.setItem("userName", response.data.result.name)
           localStorage.setItem("userRole", response.data.result.role)
+          localStorage.setItem("userEmail", response.data.result.email)
           
           this.setState({loginSuccessful: 1});  
 
