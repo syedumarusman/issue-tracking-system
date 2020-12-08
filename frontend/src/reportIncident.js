@@ -15,12 +15,20 @@ export default class ReportIncident extends Component {
             description: '',
             state: '',
             tags: [],
-            currentAssignee: null,
-            categoryState: 'Default', 
+            currentAssignee: '',
+            categoryState: 'Default',
+            optionItems: [],
+            assigneeOptions: [],
+            assigneeState: 'Default',
             stateOption: 'Default',
             errors: {},
             reportSuccessful: 0
         };
+    }
+
+    componentDidMount = () => {
+        this.setCategories();
+        this.setAssignee();
     }
 
     handleTags = (tags) => {
@@ -61,7 +69,6 @@ export default class ReportIncident extends Component {
         }
         if (this.validate(requestPayload)) {
             const response = await apiClient.post('/incident/', requestPayload);
-            //console.log(response)
             this.setState({reportSuccessful: 1})
         }
     }
@@ -115,6 +122,24 @@ export default class ReportIncident extends Component {
         return isValid;
     }
 
+    setCategories = async () => {
+        const response = await apiClient.get('/category/');
+        const categories = response.data.data;
+        const optionItems = categories.map((category) => {
+            return (<option value={category.name} key={category._id}>{category.name}</option>)
+        })
+        this.setState({optionItems: optionItems})
+    }
+
+    setAssignee = async () => {
+        const response = await apiClient.get('/user/');
+        const categories = response.data.data;
+        const optionItems = categories.map((user) => {
+            return (<option value={user.email} key={user._id}>{user.email}</option>)
+        })
+        this.setState({assigneeOptions: optionItems})
+    }
+
     render() {
         if (this.state.reportSuccessful){
             return <Redirect to='/dashboard'/>
@@ -143,10 +168,7 @@ export default class ReportIncident extends Component {
                                 <label>Category</label>
                                 <select className="form-control" name="category" value={this.state.optionsState} onChange={this.handleChange}>
                                     <option value='Default'>Select an option</option>
-                                    <option value='Critical'>Critical</option>
-                                    <option value='High'>High</option>
-                                    <option value='Medium'>Medium</option>
-                                    <option value='Low'>Low</option>
+                                    {this.state.optionItems}
                                 </select>
 
                                 <div className="text-danger">{this.state.errors.category}</div>
@@ -175,8 +197,10 @@ export default class ReportIncident extends Component {
 
                                     <div className="form-group">
                                         <label>Current assignee</label>
-                                        <input type="email" className="form-control" name="currentAssignee" placeholder="Assigned Employee" value={this.state.value} onChange={this.handleChange}/>
-
+                                        <select className="form-control" name="currentAssignee" value={this.state.optionsState} onChange={this.handleChange}>
+                                            <option value='Default'>Select an option</option>
+                                            {this.state.assigneeOptions}
+                                        </select>
                                         <div className="text-danger">{this.state.errors.currentAssignee}</div>
                                     </div>
                                 </React.Fragment>

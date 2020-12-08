@@ -33,6 +33,7 @@ const create = async (ctx) => {
     }
     const token = ctx.request.header.authorization;
     const response = await IncidentHandler.create(payload, token);
+    console.log(response)
     ctx.body = {
         meta: {
             status: 200

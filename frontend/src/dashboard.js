@@ -25,7 +25,9 @@ export default class Dashboard extends Component {
     reportSuccessful: 0,
     optionItems: [],
     editOptionItems: [],
-    pocItems: []
+    pocItems: [],
+    editPocItems: [],
+    assigneeOptions: []
   };
   }
 
@@ -52,6 +54,8 @@ export default class Dashboard extends Component {
    this.setCategories();
    this.setCategoriesForUpdate()
    this.setPoc();
+   this.setPocForUpdate();
+   this.setAssignee();
   }
 
   IncidentItem(item) {
@@ -192,61 +196,51 @@ export default class Dashboard extends Component {
     this.setState({showEdit: false})
   }
 
-  validate = () => {
-    let title = this.state.title;
-    let category = this.state.category;
-    let description = this.state.description;
-    let dateCreated = this.state.dateCreated;
-    let dateResolved = this.state.dateResolved;
-    let state = this.state.state;
-    let pointOfContact = this.state.pointOfContact;
-    let tags = this.state.tags; // DONT DO FOR NOW
-    let currentAssignee = this.state.currentAssignee;
-    
+  validate = (requestPayload) => {
     let errors = {};
     let isValid = true;
 
-    if (title === ""){
+    if (requestPayload.title === ""){
         isValid = false;
         errors["title"] = "Title must be provided."
     }
 
-    if (category === ""){
+    if (requestPayload.category === ""){
         isValid = false;
         errors["category"] = "Category must be provided.";
     }
     
-    if (description === ""){
+    if (requestPayload.description === ""){
         isValid = false;
         errors["description"] = "Description must be provided."
     }
 
-    if (dateCreated === ""){
+    if (requestPayload.dateCreated === ""){
         isValid = false;
         errors["dateCreated"] = "Date created must be provided."
     }
 
-    if (dateResolved === ""){
+    if (requestPayload.dateResolved === ""){
         // isValid = false;
         // errors["dateResolved"] = "Date resolved must be provided."
     }
 
-    if (state === ""){
+    if (requestPayload.state === ""){
         isValid = false;
         errors["state"] = "State must be provided."
     }
 
-    if (pointOfContact === ""){
+    if (requestPayload.pointOfContact === ""){
         isValid = false;
         errors["pointOfContact"] = "Point Of Contact must be provided."
     }
 
-    if (tags === ""){
+    if (requestPayload.tags === ""){
         isValid = false;
         errors["tags"] = "Tags must be provided."
     }
 
-    if (currentAssignee === ""){
+    if (requestPayload.currentAssignee === ""){
         isValid = false;
         errors["currentAssignee"] = "Current assignee must be provided."
     }
@@ -257,20 +251,22 @@ export default class Dashboard extends Component {
 }
 
   handleSubmit = async (event) => {
+    
     event.preventDefault();
+    const currentIncidentId = this.state.selectedIncident._id
     const requestPayload = {
         title: this.state.title,
         category: this.state.category, 
         description: this.state.description,
-        dateCreated: this.state.dateCreated,
-        dateResolved: this.state.dateResolved,
         state: this.state.state,
         pointOfContact: this.state.pointOfContact,
         tags: this.state.tags,
-        currentAssignee: this.state.currentAssignee
+        currentAssignee: this.state.currentAssignee,
+        caseHistory: this.state.selectedIncident.caseHistory
     }
-    if (this.validate()) {
-        const response = await apiClient.put('/incident/', requestPayload);
+    if (this.validate(requestPayload)) {
+        const response = await apiClient.put('/incident/' + currentIncidentId, requestPayload);
+        this.setState({showEdit: false})
         this.setState({reportSuccessful: 1})
     }
 }
@@ -292,7 +288,8 @@ export default class Dashboard extends Component {
       <Modal.Header closeButton>
     <Modal.Title> Title </Modal.Title>
       </Modal.Header>
-      <Modal.Body>  <form onSubmit={this.handleSubmit}>
+      <Modal.Body>  
+        <form onSubmit={this.handleSubmit}>
 
           <div className="form-group">
               <label>Tag</label>
@@ -310,7 +307,7 @@ export default class Dashboard extends Component {
 
               <div className="form-group col-md-6">
                   <label>Category</label>
-                  <select className="form-control" name="categoryFilterUpdate" value={this.state.categoryFilterUpdate} onChange={this.handleChange}>
+                  <select className="form-control" name="category" value={this.state.category} onChange={this.handleChange}>
                     <option value='Default'>Select</option>
                       {this.state.editOptionItems}
                   </select>
@@ -341,9 +338,9 @@ export default class Dashboard extends Component {
                   <label>State</label>
                   <select className="form-control" name="state" value={this.state.state} onChange={this.handleChange}>
                       <option value='Default'>Select</option>
-                      <option value="open">Open</option>
-                      <option value="inProgress">In-Progress</option>
-                      <option value="done">Done</option>
+                      <option value="Open">Open</option>
+                      <option value="In Progress">In-Progress</option>
+                      <option value="Done">Done</option>
                   </select>
 
                   <div className="text-danger">{this.state.errors.state}</div>
@@ -351,20 +348,27 @@ export default class Dashboard extends Component {
 
               <div className="form-group">
                   <label>Point of Contact</label>
-                  <input type="email" className="form-control" name="pointOfContact" value={this.state.pointOfContact} placeholder={currentIncident.pointOfContact} onChange={this.handleChange}/>
-
+                  {/* <input type="email" className="form-control" name="pointOfContact" value={this.state.pointOfContact} placeholder={currentIncident.pointOfContact} onChange={this.handleChange}/> */}
+                  <div className="form-group">
+                    <select className="form-control" name="pointOfContact" value={this.state.optionsState} onChange={this.handleChange}>
+                        <option value='Default'>Select an option</option>
+                        {this.state.editPocItems}
+                    </select>
                   <div className="text-danger">{this.state.errors.pointOfContact}</div>
               </div>
 
               <div className="form-group">
-                  <label>Current assignee</label>
-                  <input type="email" className="form-control" name="currentAssignee" value={this.state.currentAssignee} placeholder={currentIncident.currentAssignee} onChange={this.handleChange}/>
-
-                  <div className="text-danger">{this.state.errors.currentAssignee}</div>
+                <label>Current assignee</label>
+                <select className="form-control" name="currentAssignee" value={this.state.optionsState} onChange={this.handleChange}>
+                    <option value='Default'>Select an option</option>
+                    {this.state.assigneeOptions}
+                </select>
+                <div className="text-danger">{this.state.errors.currentAssignee}</div>
               </div>
-          </div>
+            </div>
+            </div>
 
-          <button type="submit" className="btn btn-primary btn-block">Submit</button>
+          <button type="submit" className="btn btn-primary btn-block">Update Incident</button>
 
       </form>
       </Modal.Body>
@@ -400,9 +404,27 @@ export default class Dashboard extends Component {
     const response = await apiClient.get('/user/');
     const users = response.data.data;
     const pocItems = users.map((user) => {
-    return (<option value={user.name} key={user._id}>{user.name}</option>);
+    return (<option value={user.email} key={user._id}>{user.email}</option>);
     })
     this.setState({pocItems: pocItems})
+  }
+
+  setPocForUpdate = async () => {
+    const response = await apiClient.get('/user/');
+    const users = response.data.data;
+    const pocItems = users.map((user) => {
+    return (<option value={user.email} key={user._id}>{user.email}</option>);
+    })
+    this.setState({editPocItems: pocItems})
+  }
+
+  setAssignee = async () => {
+    const response = await apiClient.get('/user/' + "customer");
+    const assignees = response.data.data;
+    const optionItems = assignees.map((user) => {
+      return (<option value={user.email} key={user._id}>{user.email}</option>)
+    })
+    this.setState({assigneeOptions: optionItems})
   }
 
   render() {
@@ -436,9 +458,9 @@ export default class Dashboard extends Component {
                 <label>Filter by Status</label>
                 <select placeholder="Select an option" className="form-control" name="stateFilter" onChange={this.handleChange}>
                     <option value='Default'>Select an option</option>
-                    <option value="open">Open</option>
-                    <option value="inProgress">In-Progress</option>
-                    <option value="done">Done</option>
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In-Progress</option>
+                    <option value="Done">Done</option>
                 </select>
               </div>
 
