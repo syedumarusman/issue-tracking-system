@@ -43,6 +43,7 @@ const create = async (ctx) => {
 }
 
 const update = async (ctx) => {
+    const incidentId = ctx.params.incidentId
     const payload = {
         title: ctx.request.body.title,
         category: ctx.request.body.category,
@@ -54,7 +55,7 @@ const update = async (ctx) => {
         currentAssignee: ctx.request.body.currentAssignee,
         caseHistory: ctx.request.body.caseHistory
     }
-    const response = await IncidentHandler.update(payload);
+    const response = await IncidentHandler.update(payload, incidentId);
     ctx.body = {
         meta: {
             status: 200
@@ -65,7 +66,7 @@ const update = async (ctx) => {
 
 const remove = async (ctx) => {
     const deletePayload = { _id: ctx.params.incidentId };
-    const response = await UserHandler.remove(userId);
+    const response = await IncidentHandler.remove(deletePayload);
     ctx.body = {
         meta: {
             status: 200

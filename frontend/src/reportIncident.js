@@ -49,10 +49,10 @@ export default class ReportIncident extends Component {
                 category: this.state.category, 
                 description: this.state.description,
                 dateCreated: new Date().toLocaleString(),
-                dateResolved: null,
+                dateResolved: '',
                 state: "Open",
                 pointOfContact: localStorage.getItem("userEmail"),
-                currentAssignee: null,
+                currentAssignee: '',
             }
         } else {
             requestPayload = {
@@ -61,8 +61,8 @@ export default class ReportIncident extends Component {
                 category: this.state.category, 
                 description: this.state.description,
                 dateCreated: new Date().toLocaleString(),
-                dateResolved: null,
-                state: this.state.state,
+                dateResolved: '',
+                state: 'Open',
                 pointOfContact: localStorage.getItem("userEmail"),
                 currentAssignee: this.state.currentAssignee
             }
@@ -132,9 +132,9 @@ export default class ReportIncident extends Component {
     }
 
     setAssignee = async () => {
-        const response = await apiClient.get('/user/');
-        const categories = response.data.data;
-        const optionItems = categories.map((user) => {
+        const response = await apiClient.get('/user', {params: { exclude: 'customer' } });
+        const assignees = response.data.data;
+        const optionItems = assignees.map((user) => {
             return (<option value={user.email} key={user._id}>{user.email}</option>)
         })
         this.setState({assigneeOptions: optionItems})
@@ -181,7 +181,7 @@ export default class ReportIncident extends Component {
                                 <div className="text-danger">{this.state.errors.description}</div>
                             </div>
 
-                            {localStorage.userRole === 'Employee' || localStorage.userRole === 'admin' &&
+                            {localStorage.userRole !== 'customer' &&
                                 <React.Fragment>
                                     <div className="form-group col-md-5">
                                         <label>State</label>

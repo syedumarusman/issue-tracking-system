@@ -7,7 +7,7 @@ const sendEmail = require('./email');
 
 const getAll = async (queryPayload) => {
     Object.keys(queryPayload).forEach(key => queryPayload[key] === undefined ? delete queryPayload[key] : {});
-    return await User.find({ role: { $ne: queryPayload.role } });
+    return await User.find({ role: { $ne: queryPayload.exclude } });
 }
 
 const getUser = async (userId) => {
@@ -31,7 +31,7 @@ const loginUser = async (payload) => {
     if (!user) {
         throw Boom.badRequest("Email or password is incorrect.");
     }
-    const token = jwt.sign(user.toJSON(), JWT_SECRET_KEY, { expiresIn: 3600 })
+    const token = jwt.sign(user.toJSON(), JWT_SECRET_KEY, { expiresIn: "7d" })
     const userDetails = {
         userId: user._id,
         name: user.name,

@@ -3,7 +3,7 @@ const { USER_ROLES } = require('../utils/constants');
 
 const getAll = async (ctx) => {
     const queryPayload = {
-        exclude: ctx.params.role
+        exclude: ctx.query.exclude
     }
     const response = await UserHandler.getAll(queryPayload);
     ctx.body = {

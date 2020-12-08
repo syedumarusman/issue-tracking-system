@@ -56,7 +56,7 @@ const create = async (payload, token) => {
     }
 }
 
-const update = async (payload) => {
+const update = async (payload, incidentId) => {
     try {
         // remove undefined variables from the request payload 
         Object.keys(payload).forEach(key => payload[key] === undefined ? delete payload[key] : {});
@@ -70,21 +70,23 @@ const update = async (payload) => {
             throw Boom.badRequest('incident already exist');
         }
         // update the current incident using the request payload
-        const updatedIncident = await Incident.findByIdAndUpdate( currentIncident._id , payload, { new: true });
-
+        const updatedIncident = await Incident.findByIdAndUpdate( incidentId , payload, { new: true, useFindAndModify: true } );
+ 
         // update case history of that incident
+        const currentDateTime = new Date().toLocaleString();
         if(typeof currentIncident !== 'string') {
-            const currentDateTime = new Date().toLocaleString();
-            let newHistory = [];
-            newHistory.concat(payload.caseHistory);
-            newHistory.push(`Incident with ID(${updatedIncident._id}) and Title(${updatedIncident.title}) was updated at ${currentDateTime}`);
+            let newHistory = `Incident with ID(${updatedIncident._id}) and Title(${updatedIncident.title}) was updated at ${currentDateTime}`;
             // if state is updated to "done", append case history with new change
-            if(payload.state === STATE.done) {
-                newHistory.push(`Incident with ID(${updatedIncident._id}) and Title(${updatedIncident.title}) was updated at ${currentDateTime}`);
-            }
             await Incident.findByIdAndUpdate(
                 { _id: updatedIncident._id },
-                { $set: { caseHistory: newHistory } },
+                { $push: { caseHistory: newHistory } },
+                { new: true });
+        }
+        if(payload.state === STATE.done) {
+            const doneHistory = `Incident with ID(${updatedIncident._id}) and Title(${updatedIncident.title}) was resolved at ${currentDateTime}`;
+            await Incident.findByIdAndUpdate(
+                { _id: updatedIncident._id },
+                { $push: { caseHistory: doneHistory }, $set: {dateResolved: currentDateTime} },
                 { new: true });
         }
         return updatedIncident;
@@ -99,9 +101,9 @@ const remove = async (payload) => {
         if (error) {
             throw error;
         }
-        const response = await Incident.findOneAndRemove({ _id: userId }, { useFindAndModify: false });
-        if (!user) {
-            throw Boom.notFound('User does not exist');
+        const response = await Incident.findOneAndRemove(payload, { useFindAndModify: false });
+        if (!response) {
+            throw Boom.notFound('Incident does not exist');
         }        
         return response;
     } catch (err) {

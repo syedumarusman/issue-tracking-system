@@ -11,7 +11,7 @@ export default class Dashboard extends Component {
     super(props);
     this.state = {
     tableBody: null, userRole: localStorage.getItem("userRole"), categoryFilter: 'Default', categoryFilterUpdate: "Default", stateFilter: 'Default', pocFilter: 'Default',
-    showView: false, showEdit: false, apiResponse: '', selectedIncident: {},
+    showView: false, showEdit: false, apiResponse: [], selectedIncident: {},
     errors: {},
     title: '',
     category: '', 
@@ -38,8 +38,9 @@ export default class Dashboard extends Component {
     this.setState({showView: true})
 
     //console.log(currentIncident.caseHistory[0])
-
-    this.setState({apiResponse: currentIncident.caseHistory[0]})
+    
+    this.setState({apiResponse: currentIncident.caseHistory})
+    console.log(this.state.apiResponse)
     // apiClient.get('/incident/', requestPayload).then((response) => {
     //   //console.log(response)
     // });
@@ -73,12 +74,8 @@ export default class Dashboard extends Component {
           <td>{item.currentAssignee}</td>
           <td>
           <button onClick={this.handleShow(item)} className="btn-gradient btn green mini">View</button>
-          {localStorage.userRole ==='customer' || 
-          <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>
-          }
-          {localStorage.userRole ==='customer' || 
-           <button onClick={this.deleteHandler} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>
-          } 
+          {localStorage.userRole !=='customer' ? <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>: ''}
+          {localStorage.userRole !=='customer'? <button onClick={this.deleteHandler(item)} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>: ''} 
           </td>
       </tr>)
     } else if (this.state.categoryFilter.toLowerCase() === item.category.toLowerCase()){
@@ -95,12 +92,8 @@ export default class Dashboard extends Component {
       <td>{item.currentAssignee}</td>
       <td>
       <button onClick={this.handleShow(item)} className="btn-gradient btn green mini">View</button>
-      {localStorage.userRole ==='customer' || 
-      <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>
-      }
-      {localStorage.userRole ==='customer' || 
-       <button onClick={this.deleteHandler} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>
-      } 
+      {localStorage.userRole !=='customer' ? <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>: ''}
+      {localStorage.userRole !=='customer'? <button onClick={this.deleteHandler(item)} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>: ''} 
       </td>
   </tr>)
     } else if (this.state.stateFilter.toLowerCase() === item.state.toLowerCase()){
@@ -117,12 +110,8 @@ export default class Dashboard extends Component {
           <td>{item.currentAssignee}</td>
           <td>
           <button onClick={this.handleShow(item)} className="btn-gradient btn green mini">View</button>
-          {localStorage.userRole ==='customer' || 
-          <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>
-          }
-          {localStorage.userRole ==='customer' || 
-           <button onClick={this.deleteHandler} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>
-          } 
+          {localStorage.userRole !=='customer' ? <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>: ''}
+          {localStorage.userRole !=='customer'? <button onClick={this.deleteHandler(item)} value={item.title} className="btn btn-gradient red mini text-white">Delete</button>: ''} 
           </td>
       </tr>)
     } else if (this.state.pocFilter.toLowerCase() === item.pointOfContact.toLowerCase()){
@@ -139,10 +128,10 @@ export default class Dashboard extends Component {
           <td>{item.currentAssignee}</td>
           <td>
           <button onClick={this.handleShow(item)} className="btn-gradient btn green mini">View</button>
-          {localStorage.userRole ==='customer' || 
+          {localStorage.userRole ==='customer' && 
           <button onClick={this.editHandler(item)} className="btn btn-gradient blue mini text-white">Edit</button>
           }
-          {localStorage.userRole ==='customer' || 
+          {localStorage.userRole ==='customer' && 
            <button onClick={this.deleteHandler(item)} className="btn btn-gradient red mini text-white">Delete</button>
           } 
           </td>
@@ -165,27 +154,27 @@ export default class Dashboard extends Component {
     }
   }
 
-  handleChange = (event) => {
+  handleFilterChange = (event) => {
     this.setState({[event.target.name]: event.target.value});
     this.IncidentList();
   }
 
-  viewHandler = () => {
+  handleChange = (event) => {
+    this.setState({[event.target.name]: event.target.value});
+  }
 
+  viewHandler = () => {
+    const rows = this.state.apiResponse.map((response, i) => {
+      console.log(response, i)
+      return (<div key={i}> {response}</div>)
+    })
     return(
     <Modal show={this.state.showView} onHide={this.handleClose}>
       <Modal.Header closeButton>
     <Modal.Title> {this.state.apiResponse && this.state.apiResponse["title"]}</Modal.Title>
       </Modal.Header>
-      <Modal.Body> Case History: {this.state.apiResponse} 
-      <form onSubmit={this.handleSubmit}>
-                        {/* <Form.Group controlId="exampleForm.ControlTextarea1">
-                          <Form.Label>Add a comment:</Form.Label>
-                          <Form.Control as="textarea" rows="3" />
-                        </Form.Group> */}
-
-                    {/* <button type="submit" className="btn btn-primary btn-block">Submit</button> */}
-                </form>
+      <Modal.Body> 
+        {rows}
       </Modal.Body>
       <Modal.Footer></Modal.Footer>
     </Modal>
@@ -264,10 +253,11 @@ export default class Dashboard extends Component {
         currentAssignee: this.state.currentAssignee,
         caseHistory: this.state.selectedIncident.caseHistory
     }
-    if (this.validate(requestPayload)) {
-        const response = await apiClient.put('/incident/' + currentIncidentId, requestPayload);
-        this.setState({showEdit: false})
-        this.setState({reportSuccessful: 1})
+    if (this.validate(requestPayload)){
+      const response = await apiClient.put('/incident/' + currentIncidentId, requestPayload);
+      this.setState({showEdit: false})
+      this.setState({reportSuccessful: 1})
+      this.IncidentList()
     }
 }
 
@@ -305,7 +295,7 @@ export default class Dashboard extends Component {
                   <div className="text-danger">{this.state.errors.title}</div>
               </div>
 
-              <div className="form-group col-md-6">
+              <div className="form-group col-md-8">
                   <label>Category</label>
                   <select className="form-control" name="category" value={this.state.category} onChange={this.handleChange}>
                     <option value='Default'>Select</option>
@@ -334,9 +324,9 @@ export default class Dashboard extends Component {
                   <input type="date" className="form-control" name="dateResolved" placeholder="Enter description" value={currentIncident.dateResolved} onChange={this.handleChange}/>
               </div> */}
 
-              <div className="form-group col-md-5">
+              <div className="form-group col-md-8">
                   <label>State</label>
-                  <select className="form-control" name="state" value={this.state.state} onChange={this.handleChange}>
+                  <select className="form-control" name="state" value={this.state.optionsState} onChange={this.handleChange}>
                       <option value='Default'>Select</option>
                       <option value="Open">Open</option>
                       <option value="In Progress">In-Progress</option>
@@ -377,9 +367,11 @@ export default class Dashboard extends Component {
     );
   }
   
-  deleteHandler = (currentItem) => {
-    const requestPayload = { _id: currentItem._id }
-    apiClient.delete('/incident/', requestPayload );
+  deleteHandler = (currentItem) => (e) => {
+    console.log("inside delete")
+    console.log(currentItem._id)
+    apiClient.delete('/incident/' + currentItem._id );
+    this.IncidentList()
   }
 
   setCategories = async () => {
@@ -419,7 +411,7 @@ export default class Dashboard extends Component {
   }
 
   setAssignee = async () => {
-    const response = await apiClient.get('/user/' + "customer");
+    const response = await apiClient.get('/user', {params: { exclude: 'customer' } });
     const assignees = response.data.data;
     const optionItems = assignees.map((user) => {
       return (<option value={user.email} key={user._id}>{user.email}</option>)
@@ -428,10 +420,6 @@ export default class Dashboard extends Component {
   }
 
   render() {
-    const createButtonStyle = {
-      'padding-top': '31px',
-      'margin-left': '355px'
-    }
     return (
       <div>
           {this.viewHandler()}
@@ -441,7 +429,7 @@ export default class Dashboard extends Component {
           <div className='form-row'>
             <div className="form-group col-md-3">
               <label>Filter by Category</label>
-              <select placeholder="Select an option" className="form-control" name="categoryFilter" onChange={this.handleChange}>
+              <select placeholder="Select an option" className="form-control" name="categoryFilter" onChange={this.handleFilterChange}>
                 <option value='Default'>Select an option</option>
                   {this.state.optionItems}
               </select>
@@ -449,24 +437,19 @@ export default class Dashboard extends Component {
 
             <div className="form-group col-md-2">
               <label>Filter by Point of Contact</label>
-              <select placeholder="Select an option" className="form-control" name="pocFilter" onChange={this.handleChange}>
+              <select placeholder="Select an option" className="form-control" name="pocFilter" onChange={this.handleFilterChange}>
                   <option value='Default'>Select an option</option>
                   {this.state.pocItems}
               </select>
             </div>
             <div className="form-group col-md-2">
                 <label>Filter by Status</label>
-                <select placeholder="Select an option" className="form-control" name="stateFilter" onChange={this.handleChange}>
+                <select placeholder="Select an option" className="form-control" name="stateFilter" onChange={this.handleFilterChange}>
                     <option value='Default'>Select an option</option>
                     <option value="Open">Open</option>
                     <option value="In Progress">In-Progress</option>
                     <option value="Done">Done</option>
                 </select>
-              </div>
-
-              <div className="form-row-1 col-md-2" style={createButtonStyle}>
-                
-                <Button variant="primary" href='/reportIncident'>+ Create new incident</Button>
               </div>
 
           </div>
