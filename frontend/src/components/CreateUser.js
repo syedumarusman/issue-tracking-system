@@ -3,21 +3,14 @@ import { Alert, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router';
 import { apiClient } from '../_helpers/axios';
 
-export default class EditUser extends Component {
+export default class CreateUser extends Component {
     constructor(props){
         super(props);
-        this.state = {name: '', email: '', role: '', password: '', confirmPassword: '', errors: {}, updateUserSuccessful: 0, showSuccess: false, showFailure: false};
+        this.state = {name: '', email: '', role: '', password: '', confirmPassword: '', errors: {}, createUserSuccessful: 0, showSuccess: false, showFailure: false};
       }
 
-      componentDidMount = async () => {
-        const response = await apiClient.get('/user/' + this.props.match.params.id);
-        this.setState({
-            name: response.data.data.name,
-            role: response.data.data.role,
-            email: response.data.data.email,
-            password: response.data.data.password,
-            confirmPassword: response.data.data.password
-            })
+      componentDidMount = () => {
+        
       }
     
       handleChange = (event) => {
@@ -26,11 +19,11 @@ export default class EditUser extends Component {
     
       handleSubmit = async (event) => {
         event.preventDefault();
-        const requestPayload = { userId: this.props.match.params.id, name: this.state.name, role: this.state.role, email: this.state.email, password: this.state.password }
+        const requestPayload = { name: this.state.name, role: this.state.role, email: this.state.email, password: this.state.password }
 
         if (this.validate()){
             try {
-                await apiClient.put('/user/' + this.props.match.params.id, requestPayload);
+                await apiClient.post('/user/', requestPayload);
                 this.setState({updateUserSuccessful: 1, showSuccess: true});
             }
             catch(err){
@@ -93,12 +86,12 @@ export default class EditUser extends Component {
             return (
                     <form onSubmit={this.handleSubmit}>
                         <Alert show={this.state.showSuccess} variant="success" dismissible>
-                        Successfully edited {this.state.name}
+                        Successfully created {this.state.name}
                         </Alert>
                         <Alert show={this.state.showFailure} variant="danger" dismissible>
-                            Failure to edit {this.state.name}
+                            Failure to create {this.state.name}
                         </Alert>
-                        <h3>Edit User {this.props.match.params.id}</h3>
+                        <h3>Create User {this.props.match.params.id}</h3>
 
                         <div className="form-group">
                             <label>Full Name</label>
@@ -136,7 +129,7 @@ export default class EditUser extends Component {
 
                         <div className="form-group">
                             <label>Confirm Password</label>
-                            <input type="password" className="form-control" name="confirmPassword" placeholder="Enter password" value={this.state.password} onChange={this.handleChange}/>
+                            <input type="password" className="form-control" name="confirmPassword" placeholder="Enter password" value={this.state.confirmPassword} onChange={this.handleChange}/>
 
                             <div className="text-danger">{this.state.errors.confirmPassword}</div>
                         </div>

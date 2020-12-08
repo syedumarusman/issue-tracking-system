@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from 'react-router';
+import { Button } from 'react-bootstrap';
 import { apiClient } from '../_helpers/axios';
 
 export default class ListUsers extends Component {
@@ -40,15 +41,9 @@ export default class ListUsers extends Component {
     )
   }
 
-  async TableBody () {
-    //test data, this should be provided by backend
-    const incidents = [
-        { _id: 1, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-        { _id: 2, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-        { _id: 3, name: "Asf Jsf", email: 'asdf@sfasdf.com', role: 'admin' },
-    ]; 
-    //const response = await apiClient.get('/incident/');
-    //const incidents = response.data.data;
+  async TableBody () { 
+    const response = await apiClient.get('/user/');
+    const incidents = response.data.data;
     const tableItems = incidents.map((item) => this.TableItem(item));
     const tableHeader = this.TableHeader();
     this.setState({tableBody: (
@@ -67,7 +62,7 @@ export default class ListUsers extends Component {
   }
   
   async deleteHandler(event) {
-    alert("User ID is "+ event.target.value);
+    //alert("User ID is "+ event.target.value);
     const response = await apiClient.delete('/user', { data: { _id: event.target.value } } );
   }
 
@@ -86,6 +81,7 @@ export default class ListUsers extends Component {
         <div>
           {this.renderRedirect()}
           <h3>Users</h3>
+          <Button variant="primary" href='/createUser'>+ Create new user</Button>
           <table className="contentTable">
             {this.TableHeader()}
             {this.state.tableBody}

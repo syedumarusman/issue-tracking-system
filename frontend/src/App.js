@@ -15,6 +15,7 @@ import Search from "./components/Search"
 import ReportIncident from "./reportIncident.js"
 import EditUser from "./components/EditUser"
 import ListUsers from "./components/ListUsers"
+import CreateUser from "./components/CreateUser"
 import CreateCategory from "./components/CreateCategory"
 import ListCategories from "./components/ListCategories"
 import LogOut from "./components/LogOut"
@@ -22,8 +23,15 @@ import LogOut from "./components/LogOut"
 export default class App extends Component {
     constructor(props){
         super(props);
-        this.state = {query: '', redirect: ''};
-    }
+        this.state = {query: '', redirect: '', currentUserRole: null, currentUserName: null, currentUserId: null};
+	}
+	
+	componentDidMount = () => {
+		this.setState({currentUserId: localStorage.getItem("userId"),
+					   currentUserName: localStorage.getItem("userName"),
+					   currentUserRole: localStorage.getItem("userRole")
+					});
+	}
 
 	handleQuery = (event) => {
 	    this.setState({query: event.target.value});
@@ -40,6 +48,10 @@ export default class App extends Component {
 		  	return <Redirect to={this.state.redirect}></Redirect>
 		}
 	}	
+
+	logout = () => {
+		localStorage.clear();
+	}
 	
 	render () {
 		return (
@@ -54,44 +66,27 @@ export default class App extends Component {
 					  <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 					  <Navbar.Collapse id="responsive-navbar-nav">
 					    <Nav className="mx-auto"> 
-							{localStorage.userId &&
-								<React.Fragment>
-					        		<FormControl type="text" name="query" placeholder="Search" className="mr-sm-2" onChange={this.handleQuery}/>
-					        		<Dropdown onSelect={this.handleSearch}>
-									  <Dropdown.Toggle variant="success" id="dropdown-basic">
-									    Search
-									  </Dropdown.Toggle>
-
-									  <Dropdown.Menu>
-									    <Dropdown.Item eventKey="title">Title</Dropdown.Item>
-									    <Dropdown.Item eventKey="category">Category</Dropdown.Item>
-									    <Dropdown.Item eventKey="contact">Contact</Dropdown.Item>
-									  </Dropdown.Menu>
-									</Dropdown>
-								</React.Fragment>
-							}
 					    </Nav>
 					    <Nav>
-							{localStorage.userId === undefined && 
+							{!localStorage.getItem("userId") && 
 								<React.Fragment>
 									<Nav.Link href="/sign-in">Login</Nav.Link>
 									<Nav.Link href="/sign-up">Sign up</Nav.Link>
 								</React.Fragment>
 							}
-					        {localStorage.userId &&
+					        {localStorage.getItem("userId") &&
 								<React.Fragment>
 							        <Nav.Link href="/reportIncident" active>Create Incident</Nav.Link>
-		      					    <NavDropdown title={localStorage.userName} id="collasible-nav-dropdown-1" alignRight>
-								        <NavDropdown.Item>Role: {localStorage.userRole}</NavDropdown.Item>
+		      					    <NavDropdown title={this.state.currentUserName} id="collasible-nav-dropdown-1" alignRight>
+								        <NavDropdown.Item>Role: {this.state.currentUserRole}</NavDropdown.Item>
 								        <NavDropdown.Divider />
-								        <NavDropdown.Item href="/LogOut">LogOut</NavDropdown.Item>
+								        <NavDropdown.Item onClick={this.logout}href="/sign-in">LogOut</NavDropdown.Item>
 								    </NavDropdown>
 								</React.Fragment>
 							}  
-					        {localStorage.userId && localStorage.userRole === 'admin' &&
+					        {localStorage.getItem("userId") && this.state.currentUserRole === 'admin' &&
 								<React.Fragment>
 		      					    <NavDropdown title="Settings" id="collasible-nav-dropdown-2" alignRight>
-								        <NavDropdown.Item href="/EditUser">Edit User</NavDropdown.Item>
 								        <NavDropdown.Item href="/ListUsers">List Users</NavDropdown.Item>
 								        <NavDropdown.Item href="/CreateCategory">Create Category</NavDropdown.Item>
 								        <NavDropdown.Item href="/ListCategories">List Categories</NavDropdown.Item>
@@ -116,6 +111,7 @@ export default class App extends Component {
 						<PrivateRoute path="/reportIncident/" roles={['admin', 'employee', 'customer']} component={ReportIncident} />
 						<PrivateRoute path="/EditUser/:id" roles={['admin']} component={EditUser} />
 						<PrivateRoute path="/ListUsers" roles={['admin']} component={ListUsers} />
+						<PrivateRoute path="/CreateUser" roles={['admin']} component={CreateUser} />
 						<PrivateRoute path="/CreateCategory" roles={['admin']} component={CreateCategory} />
 						<PrivateRoute path="/ListCategories" roles={['admin']} component={ListCategories} />
 						{/*

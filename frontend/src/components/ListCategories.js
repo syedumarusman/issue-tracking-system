@@ -5,7 +5,7 @@ import { apiClient } from '../_helpers/axios';
 export default class ListCategories extends Component {
   constructor(props){
     super(props);
-    this.state = {redirect: false, tableBody: null};
+    this.state = {redirect: false, tableBody: null, showEmptyRow: false};
   }
 
   componentDidMount() {
@@ -33,22 +33,36 @@ export default class ListCategories extends Component {
     )
   }
 
+  emptyItem = () => {
+    return (
+      <tr>
+        <td colSpan="2">
+          No categories found.
+        </td>
+      </tr>
+    );
+  }
+
   async TableBody () {
-    //test data, this should be provided by backend
-    const incidents = [
-        { _id: 1, name: "Asf Jsf"},
-        { _id: 2, name: "Asf Jsf" },
-        { _id: 3, name: "Asf Jsf" },
-    ]; 
-    //const response = await apiClient.get('/incident/');
-    //const incidents = response.data.data;
-    const tableItems = incidents.map((item) => this.TableItem(item));
-    const tableHeader = this.TableHeader();
-    this.setState({tableBody: (
-      <tbody>
-        {tableItems}
-      </tbody>
-    )})
+    const response = await apiClient.get('/category/');
+    const incidents = response.data.data;
+    if (incidents.length === 0){
+      this.setState({showEmptyRow: true})
+      const tableItems = this.emptyItem();
+      this.setState({tableBody: (
+        <tbody>
+          {tableItems}
+        </tbody>
+      )})
+    } else{
+      const tableItems = incidents.map((item) => this.TableItem(item));
+      const tableHeader = this.TableHeader();
+      this.setState({tableBody: (
+        <tbody>
+          {tableItems}
+        </tbody>
+      )})
+    }
   }
 
   viewHandler(event) {
@@ -60,8 +74,9 @@ export default class ListCategories extends Component {
   }
   
   async deleteHandler(event) {
-    alert(event.target.value);
-    const response = await apiClient.delete('/category', { data: { _id: event.target.value } } );
+    await apiClient.delete('/category/' + event.target.value).then((response) => {
+      window.location.reload()
+    });
   }
 
   setRedirect = () => {

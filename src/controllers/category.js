@@ -11,7 +11,7 @@ const getAll = async (ctx) => {
 }
 
 const getOne = async (ctx) => {
-    const payload = { _id: ctx.params.userId };
+    const payload = { _id: ctx.params.categoryId };
     const response = await CategoryHandler.getOne(payload);
     ctx.body = {
         meta: {
@@ -49,7 +49,7 @@ const update = async (ctx) => {
 }
 
 const remove = async (ctx) => {
-    const payload = { _id: ctx.params.userId };
+    const payload = { _id: ctx.params.categoryId };
     const response = await CategoryHandler.remove(payload);
     ctx.body = {
         meta: {

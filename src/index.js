@@ -5,6 +5,7 @@ const bodyParser = require('koa-bodyparser');
 const Boom = require('boom');
 const userRoutes = require('./routes/user');
 const incidentRoutes = require('./routes/incident');
+const categoryRoutes = require('./routes/category')
 
 const app = new Koa();
 
@@ -38,7 +39,7 @@ app.use(async function validationMiddleware(ctx, next) {
 
 app.use(bodyParser());
 
-const routes = Compose([userRoutes, incidentRoutes]) 
+const routes = Compose([userRoutes, incidentRoutes, categoryRoutes]) 
 app.use(routes);
 
 app.listen(4000, () => {

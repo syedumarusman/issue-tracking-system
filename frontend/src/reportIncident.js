@@ -9,17 +9,18 @@ export default class ReportIncident extends Component {
     constructor(props){
         super(props)
 
-        this.state = {title: '',
-                      category: '', 
-                      description: '',
-                      state: '',
-                      tags: [],
-                      currentAssignee: null,
-                      categoryState: 'Default', 
-                      stateOption: 'Default',
-                      errors: {},
-                      reportSuccessful: 0};
-
+        this.state = {
+            title: '',
+            category: '', 
+            description: '',
+            state: '',
+            tags: [],
+            currentAssignee: null,
+            categoryState: 'Default', 
+            stateOption: 'Default',
+            errors: {},
+            reportSuccessful: 0
+        };
     }
 
     handleTags = (tags) => {
@@ -60,6 +61,7 @@ export default class ReportIncident extends Component {
         }
         if (this.validate(requestPayload)) {
             const response = await apiClient.post('/incident/', requestPayload);
+            //console.log(response)
             this.setState({reportSuccessful: 1})
         }
     }

@@ -73,16 +73,12 @@ const update = async (payload) => {
     if (error) {
         throw error;
     }
-    const query = { id: payload.userId };
+    const query = { _id: payload.userId };
     const user = await User.findOne(query);
     if (!user) {
-        throw Boom.notFound('User does not exist');
+        throw Boom.notFound('User does not exist')
     }
-    user = user.toObject();
-    delete user._id;
-    const updatedPayload = Object.assign({}, user, payload);
-    const updatedUser = await User.findOneAndUpdate(query, updatedPayload, { new: true, 
-        upsert: true, setDefaultsOnInsert: true, useFindAndModify: false });
+    user = await User.findByIdAndUpdate( payload.userId , payload, { new: true });
     return user;
 }
 

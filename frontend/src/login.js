@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { apiClient } from './_helpers/axios';
 import './styles/table.css'
 
