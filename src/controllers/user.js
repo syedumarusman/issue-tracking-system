@@ -2,7 +2,10 @@ const UserHandler = require('../handlers/user');
 const { USER_ROLES } = require('../utils/constants');
 
 const getAll = async (ctx) => {
-    const response = await UserHandler.getAll();
+    const queryPayload = {
+        exclude: ctx.params.role
+    }
+    const response = await UserHandler.getAll(queryPayload);
     ctx.body = {
         meta: {
             status: 200

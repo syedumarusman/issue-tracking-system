@@ -5,8 +5,9 @@ const { JWT_SECRET_KEY } = require('../utils/constants');
 const { createSchema, getUserSchema, resetPasswordSchema, updateSchema, removeSchema, loginUserSchema } = require('../validations/userSchema');
 const sendEmail = require('./email');
 
-const getAll = async () => {
-    return await User.find();
+const getAll = async (queryPayload) => {
+    Object.keys(queryPayload).forEach(key => queryPayload[key] === undefined ? delete queryPayload[key] : {});
+    return await User.find({ role: { $ne: queryPayload.role } });
 }
 
 const getUser = async (userId) => {

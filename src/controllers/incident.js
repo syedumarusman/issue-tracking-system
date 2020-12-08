@@ -8,9 +8,7 @@ const getAll = async (ctx) => {
         pointOfContact: ctx.query.pointOfContact,
         tags: ctx.query.tags
     }
-    //console.log(ctx)
     const token = ctx.request.header.authorization;
-    //console.log(token)
     const response = await IncidentHandler.getAll(filterPayload, token);
     ctx.body = {
         meta: {
@@ -43,5 +41,36 @@ const create = async (ctx) => {
     };
 }
 
+const update = async (ctx) => {
+    const payload = {
+        title: ctx.request.body.title,
+        category: ctx.request.body.category,
+        description: ctx.request.body.description,
+        dateResolved: ctx.request.body.dateResolved,
+        state: ctx.request.body.state,
+        pointOfContact: ctx.request.body.pointOfContact,
+        tags: ctx.request.body.tags,
+        currentAssignee: ctx.request.body.currentAssignee,
+        caseHistory: ctx.request.body.caseHistory
+    }
+    const response = await IncidentHandler.update(payload);
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: response
+    };
+}
 
-module.exports = { getAll, create }
+const remove = async (ctx) => {
+    const deletePayload = { _id: ctx.params.incidentId };
+    const response = await UserHandler.remove(userId);
+    ctx.body = {
+        meta: {
+            status: 200
+        },
+        data: response
+    };
+}
+
+module.exports = { getAll, create, update, remove }

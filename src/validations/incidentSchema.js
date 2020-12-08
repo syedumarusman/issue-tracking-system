@@ -21,4 +21,20 @@ const createSchema = Joi.object({
     caseHistory: Joi.array().items(Joi.string()).required()
 });
 
-module.exports = { createSchema, getAllSchema }
+const updateSchema = Joi.object({
+    title: Joi.string(),
+    category: Joi.string(),
+    description: Joi.string(),
+    dateResolved: Joi.date(),
+    state: Joi.string(),
+    pointOfContact: Joi.string(),
+    tags: Joi.array().items(Joi.string()),
+    currentAssignee: Joi.string(),
+    caseHistory: Joi.array().items(Joi.string()).required()
+});
+
+const removeSchema = Joi.object({
+    _id: Joi.string().required()  
+})
+
+module.exports = { createSchema, getAllSchema, updateSchema, removeSchema }
